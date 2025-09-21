@@ -12,7 +12,7 @@ void simulateLinear(double a, double b, double u, int steps) {
     cout << "Линейная модель" << endl;
     double y = 0.0;
     for (int i = 0; i < steps; ++i) {
-        cout << "Step " << i << ": " << y << endl;
+        cout << "Шаг " << i << ": " << y << endl;
         y = Linear(a, b, u, y);
     }
     cout << endl;
@@ -34,7 +34,7 @@ void simulateNonlinear(double a, double b, double c, double d, double u, int ste
     double yPrev = 0.0;
     bool firstStep = true;
     for (int i = 0; i < steps; ++i) {
-        cout << "Step " << i << ": " << y << endl;
+        cout << "Шаг " << i << ": " << y << endl;
         double yNext = Nonlinear(a, b, c, d, u, y, yPrev, firstStep);
         firstStep = false;
         yPrev = y;
