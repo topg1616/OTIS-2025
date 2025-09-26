@@ -2,7 +2,7 @@
 #include <cmath>
 using namespace std;
 
-// значение линейной модели
+// линейная модель
 double Linear(double a, double b, double u, double y) {
     return a * y + b * u;
 }
@@ -18,13 +18,9 @@ void simulateLinear(double a, double b, double u, int steps) {
     cout << endl;
 }
 
-// значение нелинейной модели
-double Nonlinear(double a, double b, double c, double d, double u, double y, double yPrev, bool firstStep) {
-    if (firstStep) {
-        // первый шаг - фикс значение вместо u и yPrev
-        return a * y - b * (yPrev * yPrev) + c * 1.0 + d * sin(1.0);
-    }
-    return a * y - b * (yPrev * yPrev) + c * u + d * sin(u);
+// нелинейная модель
+double Nonlinear(double a, double b, double c, double d, double u, double uPrev, double y, double yPrev) {
+    return a * y - b * (yPrev * yPrev) + c * u + d * sin(uPrev);
 }
 
 // симуляция нелинейной модели
@@ -32,12 +28,12 @@ void simulateNonlinear(double a, double b, double c, double d, double u, int ste
     cout << "Нелинейная модель" << endl;
     double y = 0.0;
     double yPrev = 0.0;
-    bool firstStep = true;
+    double uPrev = 0.0;
     for (int i = 0; i < steps; ++i) {
         cout << "Шаг " << i << ": " << y << endl;
-        double yNext = Nonlinear(a, b, c, d, u, y, yPrev, firstStep);
-        firstStep = false;
+        double yNext = Nonlinear(a, b, c, d, u, uPrev, y, yPrev);
         yPrev = y;
+        uPrev = u;
         y = yNext;
     }
     cout << endl;
