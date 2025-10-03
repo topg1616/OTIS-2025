@@ -1,6 +1,11 @@
 #include <iostream>
 #include <cmath>
 
+// параметры нелинейной модели
+struct NonlinearParams {
+    double a, b, c, d;
+};
+
 // линейная модель
 double Linear(double a, double b, double u, double y) {
     return a * y + b * u;
@@ -18,19 +23,19 @@ void simulateLinear(double a, double b, double u, int steps) {
 }
 
 // нелинейная модель
-double Nonlinear(double a, double b, double c, double d, double u, double uPrev, double y, double yPrev) {
-    return a * y - b * (yPrev * yPrev) + c * u + d * sin(uPrev);
+double Nonlinear(const NonlinearParams& p, double u, double uPrev, double y, double yPrev) {
+    return p.a * y - p.b * (yPrev * yPrev) + p.c * u + p.d * sin(uPrev);
 }
 
 // симуляция нелинейной модели
-void simulateNonlinear(double a, double b, double c, double d, double u, int steps) {
+void simulateNonlinear(const NonlinearParams& p, double u, int steps) {
     std::cout << "Nonlinear model" << std::endl;
     double y = 0.0;
     double yPrev = 0.0;
     double uPrev = 0.0;
     for (int i = 0; i < steps; ++i) {
         std::cout << "Step " << i << ": " << y << std::endl;
-        double yNext = Nonlinear(a, b, c, d, u, uPrev, y, yPrev);
+        double yNext = Nonlinear(p, u, uPrev, y, yPrev);
         yPrev = y;
         uPrev = u;
         y = yNext;
@@ -39,7 +44,6 @@ void simulateNonlinear(double a, double b, double c, double d, double u, int ste
 }
 
 int main() {
-
     // параметры линейной модели
     double a1 = 0.1;
     double b1 = 0.3;
@@ -49,14 +53,11 @@ int main() {
     simulateLinear(a1, b1, u1, n1);
 
     // параметры нелинейной модели
-    double a2 = 0.7;
-    double b2 = 0.9;
-    double c2 = 0.11;
-    double d2 = 0.13;
+    NonlinearParams p{0.7, 0.9, 0.11, 0.13};
     double u2 = 0.15;
     int n2 = 10;
 
-    simulateNonlinear(a2, b2, c2, d2, u2, n2);
+    simulateNonlinear(p, u2, n2);
 
     return 0;
 }
