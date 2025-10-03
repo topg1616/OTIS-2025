@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cmath>
-using namespace std;
 
 // линейная модель
 double Linear(double a, double b, double u, double y) {
@@ -9,13 +8,13 @@ double Linear(double a, double b, double u, double y) {
 
 // симуляция линейной модели
 void simulateLinear(double a, double b, double u, int steps) {
-    cout << "Линейная модель" << endl;
+    std::cout << "Linear model" << std::endl;
     double y = 0.0;
     for (int i = 0; i < steps; ++i) {
-        cout << "Шаг " << i << ": " << y << endl;
+        std::cout << "Step " << i << ": " << y << std::endl;
         y = Linear(a, b, u, y);
     }
-    cout << endl;
+    std::cout << std::endl;
 }
 
 // нелинейная модель
@@ -25,22 +24,21 @@ double Nonlinear(double a, double b, double c, double d, double u, double uPrev,
 
 // симуляция нелинейной модели
 void simulateNonlinear(double a, double b, double c, double d, double u, int steps) {
-    cout << "Нелинейная модель" << endl;
+    std::cout << "Nonlinear model" << std::endl;
     double y = 0.0;
     double yPrev = 0.0;
     double uPrev = 0.0;
     for (int i = 0; i < steps; ++i) {
-        cout << "Шаг " << i << ": " << y << endl;
+        std::cout << "Step " << i << ": " << y << std::endl;
         double yNext = Nonlinear(a, b, c, d, u, uPrev, y, yPrev);
         yPrev = y;
         uPrev = u;
         y = yNext;
     }
-    cout << endl;
+    std::cout << std::endl;
 }
 
 int main() {
-    setlocale(LC_ALL, "rus");
 
     // параметры линейной модели
     double a1 = 0.1;

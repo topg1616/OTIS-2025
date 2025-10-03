@@ -45,7 +45,6 @@ Task is to write program (**C++**), which simulates this object temperature.
 ```
 #include <iostream>
 #include <cmath>
-using namespace std;
 
 // линейная модель
 double Linear(double a, double b, double u, double y) {
@@ -54,13 +53,13 @@ double Linear(double a, double b, double u, double y) {
 
 // симуляция линейной модели
 void simulateLinear(double a, double b, double u, int steps) {
-    cout << "Линейная модель" << endl;
+    std::cout << "Linear model" << std::endl;
     double y = 0.0;
     for (int i = 0; i < steps; ++i) {
-        cout << "Шаг " << i << ": " << y << endl;
+        std::cout << "Step " << i << ": " << y << std::endl;
         y = Linear(a, b, u, y);
     }
-    cout << endl;
+    std::cout << std::endl;
 }
 
 // нелинейная модель
@@ -70,22 +69,21 @@ double Nonlinear(double a, double b, double c, double d, double u, double uPrev,
 
 // симуляция нелинейной модели
 void simulateNonlinear(double a, double b, double c, double d, double u, int steps) {
-    cout << "Нелинейная модель" << endl;
+    std::cout << "Nonlinear model" << std::endl;
     double y = 0.0;
     double yPrev = 0.0;
     double uPrev = 0.0;
     for (int i = 0; i < steps; ++i) {
-        cout << "Шаг " << i << ": " << y << endl;
+        std::cout << "Step " << i << ": " << y << std::endl;
         double yNext = Nonlinear(a, b, c, d, u, uPrev, y, yPrev);
         yPrev = y;
         uPrev = u;
         y = yNext;
     }
-    cout << endl;
+    std::cout << std::endl;
 }
 
 int main() {
-    setlocale(LC_ALL, "rus");
 
     // параметры линейной модели
     double a1 = 0.1;
@@ -109,27 +107,27 @@ int main() {
 }
 ```     
 ```
-Линейная модель
-Шаг 0: 0
-Шаг 1: 0.15
-Шаг 2: 0.165
-Шаг 3: 0.1665
-Шаг 4: 0.16665
-Шаг 5: 0.166665
-Шаг 6: 0.166666
-Шаг 7: 0.166667
-Шаг 8: 0.166667
-Шаг 9: 0.166667
+Linear model
+Step 0: 0
+Step 1: 0.15
+Step 2: 0.165
+Step 3: 0.1665
+Step 4: 0.16665
+Step 5: 0.166665
+Step 6: 0.166666
+Step 7: 0.166667
+Step 8: 0.166667
+Step 9: 0.166667
 
-Нелинейная модель
-Шаг 0: 0
-Шаг 1: 0.219391
-Шаг 2: 0.189501
-Шаг 3: 0.125258
-Шаг 4: 0.0912882
-Шаг 5: 0.0857081
-Шаг 6: 0.0884224
-Шаг 7: 0.0912114
-Шаг 8: 0.0927382
-Шаг 9: 0.0933562
+Nonlinear model
+Step 0: 0
+Step 1: 0.219391
+Step 2: 0.189501
+Step 3: 0.125258
+Step 4: 0.0912882
+Step 5: 0.0857081
+Step 6: 0.0884224
+Step 7: 0.0912114
+Step 8: 0.0927382
+Step 9: 0.0933562
 ```
