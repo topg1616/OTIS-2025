@@ -48,7 +48,10 @@ Task is to write program (**C++**), which simulates this object temperature.
 
 // параметры нелинейной модели
 struct NonlinearParams {
-    double a, b, c, d;
+    double a;
+    double b;
+    double c;
+    double d;
 };
 
 // линейная модель
