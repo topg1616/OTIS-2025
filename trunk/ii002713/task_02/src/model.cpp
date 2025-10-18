@@ -1,13 +1,4 @@
-#include <iostream>
-#include <cmath>
-
-// параметры нелинейной модели
-struct NonlinearParams {
-    double a;
-    double b;
-    double c;
-    double d;
-};
+#include "model.h"
 
 // линейная модель
 double Linear(double a, double b, double u, double y) {
@@ -44,23 +35,4 @@ void simulateNonlinear(const NonlinearParams& p, double u, int steps) {
         y = yNext;
     }
     std::cout << std::endl;
-}
-
-int main() {
-    // параметры линейной модели
-    double a1 = 0.1;
-    double b1 = 0.3;
-    double u1 = 0.5;
-    int n1 = 10;
-
-    simulateLinear(a1, b1, u1, n1);
-
-    // параметры нелинейной модели
-    NonlinearParams p{0.7, 0.9, 0.11, 0.13};
-    double u2 = 0.15;
-    int n2 = 10;
-
-    simulateNonlinear(p, u2, n2);
-
-    return 0;
 }
