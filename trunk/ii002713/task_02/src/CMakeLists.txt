@@ -9,7 +9,7 @@ add_library(model STATIC model.cpp)
 target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Main executable
-add_executable(task_02 task_02.cpp)
+add_executable(task_02 ${CMAKE_CURRENT_SOURCE_DIR}/task_02.cpp)
 target_link_libraries(task_02 PRIVATE model)
 
 # GoogleTest setup
@@ -24,7 +24,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 # Test executable
-add_executable(runTests ../test/test.cpp)
+add_executable(runTests ${CMAKE_CURRENT_SOURCE_DIR}/../test/test.cpp)
 target_link_libraries(runTests PRIVATE model gtest gtest_main)
 
 # Register tests
