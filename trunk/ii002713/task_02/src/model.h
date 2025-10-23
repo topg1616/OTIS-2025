@@ -1,10 +1,6 @@
 #ifndef TASK_02_MODEL_H
 #define TASK_02_MODEL_H
 
-
-#include <iostream>
-#include <cmath>
-
 // структура параметров нелинейной модели
 struct NonlinearParams {
     double a;

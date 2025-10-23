@@ -1,4 +1,6 @@
 #include "model.h"
+#include <iostream>
+#include <cmath>
 
 // линейная модель
 double Linear(double a, double b, double u, double y) {
