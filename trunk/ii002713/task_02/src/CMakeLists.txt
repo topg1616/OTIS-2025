@@ -4,15 +4,15 @@ project(task_02)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Create the model library
+# Build the model library
 add_library(model STATIC model.cpp)
 target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-# Main executable
+# Build the main executable
 add_executable(task_02 task_02.cpp)
 target_link_libraries(task_02 PRIVATE model)
 
-# Fetch and configure Google Test
+# Fetch and configure GoogleTest
 include(FetchContent)
 FetchContent_Declare(
     googletest
@@ -24,10 +24,10 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-# Test executable
+# Build the test executable
 add_executable(runTests ../test/test.cpp)
 target_link_libraries(runTests PRIVATE model gtest gtest_main)
 
-# Automatically discover and register tests
+# Register tests automatically
 include(GoogleTest)
 gtest_discover_tests(runTests)
