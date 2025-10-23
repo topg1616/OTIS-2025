@@ -7,7 +7,7 @@ double Linear(double a, double b, double u, double y) {
 
 // симуляция линейной модели
 void simulateLinear(double a, double b, double u, int steps) {
-    std::cout << "Linear model" << std::endl;
+    std::cout << "Linear model" << '\n';
     double y = 0.0;
     for (int i = 0; i < steps; ++i) {
         std::cout << "Step " << i << ": " << y << std::endl;
