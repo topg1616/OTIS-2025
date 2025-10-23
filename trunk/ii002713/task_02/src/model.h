@@ -1,5 +1,6 @@
-#ifndef MODULE_H
-#define MODULE_H
+#ifndef TASK_02_MODEL_H
+#define TASK_02_MODEL_H
+
 
 #include <iostream>
 #include <cmath>
