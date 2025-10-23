@@ -1,15 +1,30 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 project(task_02)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(main task_02.cpp test.cpp)
+# === Модель проекта ===
+add_library(model STATIC model.cpp)
+target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+# === GoogleTest ===
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+    )
+    
+# Настройка CRT, чтобы избежать ошибок MTd / MDd
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+# Подключение GoogleTest
+FetchContent_MakeAvailable(googletest)
 
 enable_testing()
-find_package(GTest REQUIRED)
 
-add_executable(runTests ../test/test_test.cpp test.cpp)
-target_link_libraries(runTests GTest::GTest GTest::Main pthread)
-
-add_test(NAME runTests COMMAND runTests)
-target_include_directories(runTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+# === Тесты ===
+add_executable(runTests ../test/test.cpp)
+target_link_libraries(runTests PRIVATE model gtest gtest_main)
+include(GoogleTest)
+gtest_discover_tests(runTests)

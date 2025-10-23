@@ -24,4 +24,4 @@ double Nonlinear(const NonlinearParams& p, double u, double uPrev, double y, dou
 // симуляция нелинейной модели
 void simulateNonlinear(const NonlinearParams& p, double u, int steps);
 
-#endif // MODULE_H
+#endif
