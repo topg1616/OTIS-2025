@@ -23,7 +23,10 @@ double Nonlinear(const NonlinearParams& p, double u, double uPrev, double y, dou
     return p.a * y - p.b * (yPrev * yPrev) + p.c * u + p.d * std::sin(uPrev);
 }
 
-// симуляция нелинейной модели
+// Симуляция нелинейной модели на заданное количество шагов.
+// p      — параметры модели (a, b, c, d)
+// u      — входной сигнал
+// steps  — число шагов симуляции
 void simulateNonlinear(const NonlinearParams& p, double u, int steps) {
     std::cout << "Nonlinear model" << '\n';
     double y = 0.0;
