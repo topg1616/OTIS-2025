@@ -16,7 +16,7 @@ target_link_libraries(task_02 PRIVATE model)
 include(FetchContent)
 FetchContent_Declare(
     googletest
-    URL https://github.com/google/googletest/archive/refs/heads/main.zip
+    URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
 )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
@@ -24,7 +24,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 # Build the test executable
-add_executable(runTests ../test/test.cpp)
+add_executable(runTests ${CMAKE_CURRENT_SOURCE_DIR}/../test/test.cpp)
 target_link_libraries(runTests PRIVATE model gtest gtest_main)
 
 # Register tests automatically
