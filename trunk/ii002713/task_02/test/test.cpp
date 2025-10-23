@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <model.h>
+#include "model.h"
 
 // тесты для линейной модели
 TEST(LinearModelTest, BaseCase) {
