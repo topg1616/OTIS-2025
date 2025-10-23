@@ -10,7 +10,7 @@ void simulateLinear(double a, double b, double u, int steps) {
     std::cout << "Linear model" << '\n';
     double y = 0.0;
     for (int i = 0; i < steps; ++i) {
-        std::cout << "Step " << i << ": " << y << std::endl;
+        std::cout << "Step " << i << ": " << y << '\n';
         y = Linear(a, b, u, y);
     }
     std::cout << '\n';
