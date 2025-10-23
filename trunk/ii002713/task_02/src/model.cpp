@@ -23,12 +23,12 @@ double Nonlinear(const NonlinearParams& p, double u, double uPrev, double y, dou
 
 // симуляция нелинейной модели
 void simulateNonlinear(const NonlinearParams& p, double u, int steps) {
-    std::cout << "Nonlinear model" << '\n';;
+    std::cout << "Nonlinear model" << '\n';
     double y = 0.0;
     double yPrev = 0.0;
     double uPrev = 0.0;
     for (int i = 0; i < steps; ++i) {
-        std::cout << "Step " << i << ": " << y << '\n';;
+        std::cout << "Step " << i << ": " << y << '\n';
         double yNext = Nonlinear(p, u, uPrev, y, yPrev);
         yPrev = y;
         uPrev = u;
