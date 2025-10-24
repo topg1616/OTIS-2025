@@ -76,7 +76,7 @@ double Nonlinear(const NonlinearParams& p, double u, double uPrev, double y, dou
  * - Обновляет предыдущие значения yPrev и uPrev для следующего шага.
  */
 void simulateNonlinear(const NonlinearParams& p, double u, int steps) {
-    std::cout << "Nonlinear model" << '\n';
+    std::cout << "Nonlinear Model Simulation:" << '\n';
     double y = 0.0;
     double yPrev = 0.0;
     double uPrev = 0.0;
