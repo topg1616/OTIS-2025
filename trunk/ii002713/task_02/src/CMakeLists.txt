@@ -16,7 +16,6 @@ add_executable(task_02 ${CMAKE_CURRENT_SOURCE_DIR}/task_02.cpp)
 target_link_libraries(task_02 PRIVATE model)
 
 # GoogleTest setup
-include(FetchContent)
 FetchContent_Declare(
     googletest
     URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
