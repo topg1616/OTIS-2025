@@ -8,7 +8,7 @@ TEST(LinearModelTest, BaseCase) {
 }
 
 TEST(LinearModelTest, WithNonZeroY) {
-    EXPECT_NEAR(Linear(0.2, 0.4, 1.0, 2.0), 0.8, 1e-6);
+    EXPECT_NEAR(Linear(0.2, 0.4, 1.0, 2.0), 1.0, 1e-6);
 }
 
 // тесты для нелинейной модели
