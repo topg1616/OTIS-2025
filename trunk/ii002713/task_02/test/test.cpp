@@ -4,12 +4,13 @@
 
 // тесты для линейной модели
 TEST(LinearModelTest, BaseCase) {
-    EXPECT_NEAR(Linear(0.1, 0.3, 0.5, 0.0), 0.15, 1e-6);
+    // a=0.1, b=0.3, y=0.5, u=0.0 -> 0.1*0.5 + 0.3*0.0 = 0.05
+    EXPECT_NEAR(Linear(0.1, 0.3, 0.5, 0.0), 0.05, 1e-6);
 }
 
 TEST(LinearModelTest, WithNonZeroY) {
-    // Expected value: 0.2 * 2.0 + 0.4 * 1.0 = 0.8
-    EXPECT_NEAR(Linear(0.2, 0.4, 1.0, 2.0), 0.8, 1e-6);
+    // a=0.2, b=0.4, y=1.0, u=2.0 -> 0.2*1.0 + 0.4*2.0 = 1.0
+    EXPECT_NEAR(Linear(0.2, 0.4, 1.0, 2.0), 1.0, 1e-6);
 }
 
 // тесты для нелинейной модели
