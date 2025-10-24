@@ -4,6 +4,9 @@ project(task_02)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+
 # Model library
 add_library(model STATIC model.cpp)
 target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
@@ -26,6 +29,9 @@ enable_testing()
 # Test executable
 add_executable(runTests ${CMAKE_CURRENT_SOURCE_DIR}/../test/test.cpp)
 target_link_libraries(runTests PRIVATE model gtest gtest_main)
+
+target_compile_options(runTests PRIVATE --coverage -g -O0)
+target_link_options(runTests PRIVATE --coverage)
 
 # Register tests
 include(GoogleTest)
