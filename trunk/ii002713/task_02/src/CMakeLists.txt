@@ -10,7 +10,7 @@ set(COVERAGE_FLAGS -fprofile-arcs -ftest-coverage -O0 -g)
 # Библиотека модели
 add_library(ii002713_model STATIC model.cpp)
 target_include_directories(ii002713_model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_compile_options(ii002713_model PRIVATE ${COVERAGE_FLAGS})св
+target_compile_options(ii002713_model PRIVATE ${COVERAGE_FLAGS})
 target_link_options(ii002713_model PRIVATE ${COVERAGE_FLAGS})
 
 # Основной исполняемый файл
