@@ -33,6 +33,9 @@ target_link_libraries(runTests_ii002713 PRIVATE model gtest gtest_main)
 target_compile_options(runTests_ii002713 PRIVATE --coverage -g -O0)
 target_link_options(runTests_ii002713 PRIVATE --coverage)
 
+# Добавляем линковку с gcov
+target_link_libraries(runTests_ii002713 PRIVATE gcov)
+
 # Register tests
 include(GoogleTest)
 gtest_discover_tests(runTests_ii002713)
