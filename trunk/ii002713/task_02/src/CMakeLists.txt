@@ -4,10 +4,8 @@ project(ii002713_task_02)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Опции для покрытия кода
-set(COVERAGE_FLAGS "-fprofile-arcs -ftest-coverage -O0 -g")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COVERAGE_FLAGS}")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${COVERAGE_FLAGS}")
+# Флаги покрытия кода
+set(COVERAGE_FLAGS -fprofile-arcs -ftest-coverage -O0 -g)
 
 # Модель
 add_library(ii002713_model STATIC model.cpp)
@@ -24,7 +22,7 @@ target_link_options(ii002713_task_02 PRIVATE ${COVERAGE_FLAGS})
 # GoogleTest
 include(FetchContent)
 
-# Перед скачиванием и сборкой GTest задаем флаги для покрытия
+# Настройка сборки GTest
 set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
 set(BUILD_GTEST ON CACHE BOOL "" FORCE)
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
@@ -33,7 +31,6 @@ FetchContent_Declare(
     googletest
     URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
 )
-
 FetchContent_MakeAvailable(googletest)
 
 enable_testing()
@@ -47,3 +44,10 @@ target_link_options(runTests_ii002713 PRIVATE ${COVERAGE_FLAGS})
 # Авто-дисквери тестов
 include(GoogleTest)
 gtest_discover_tests(runTests_ii002713)
+
+# Цель для генерации отчета покрытия gcovr
+add_custom_target(coverage
+    COMMAND gcovr -r ${CMAKE_SOURCE_DIR} --html --html-details -o coverage.html
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Generating code coverage report with gcovr"
+)
