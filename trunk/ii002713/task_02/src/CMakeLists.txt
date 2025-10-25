@@ -30,10 +30,8 @@ enable_testing()
 add_executable(runTests_ii002713 ${CMAKE_CURRENT_SOURCE_DIR}/../test/test.cpp)
 target_link_libraries(runTests_ii002713 PRIVATE model gtest gtest_main)
 
-target_compile_options(runTests_ii002713 PRIVATE --coverage -g -O0)
+target_compile_options(runTests_ii002713 PRIVATE --coverage -O0 -g)
 target_link_options(runTests_ii002713 PRIVATE --coverage)
-
-# Добавляем линковку с gcov
 target_link_libraries(runTests_ii002713 PRIVATE gcov)
 
 # Register tests
