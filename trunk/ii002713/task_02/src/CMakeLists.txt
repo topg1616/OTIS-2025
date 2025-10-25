@@ -4,36 +4,46 @@ project(ii002713_task_02)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+# Опции для покрытия кода
+set(COVERAGE_FLAGS "-fprofile-arcs -ftest-coverage -O0 -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COVERAGE_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${COVERAGE_FLAGS}")
 
-# Model library
+# Модель
 add_library(ii002713_model STATIC model.cpp)
 target_include_directories(ii002713_model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(ii002713_model PRIVATE ${COVERAGE_FLAGS})
+target_link_options(ii002713_model PRIVATE ${COVERAGE_FLAGS})
 
-# Main executable
-add_executable(ii002713_task_02 ${CMAKE_CURRENT_SOURCE_DIR}/task_02.cpp)
+# Основной исполняемый файл
+add_executable(ii002713_task_02 task_02.cpp)
 target_link_libraries(ii002713_task_02 PRIVATE ii002713_model)
+target_compile_options(ii002713_task_02 PRIVATE ${COVERAGE_FLAGS})
+target_link_options(ii002713_task_02 PRIVATE ${COVERAGE_FLAGS})
 
-# GoogleTest setup
+# GoogleTest
 include(FetchContent)
+
+# Перед скачиванием и сборкой GTest задаем флаги для покрытия
+set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+set(BUILD_GTEST ON CACHE BOOL "" FORCE)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
 FetchContent_Declare(
     googletest
     URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
 )
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
 FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-# Test executable
-add_executable(runTests_ii002713 ${CMAKE_CURRENT_SOURCE_DIR}/../test/test.cpp)
+# Тесты
+add_executable(runTests_ii002713 ../test/test.cpp)
 target_link_libraries(runTests_ii002713 PRIVATE ii002713_model gtest gtest_main)
+target_compile_options(runTests_ii002713 PRIVATE ${COVERAGE_FLAGS})
+target_link_options(runTests_ii002713 PRIVATE ${COVERAGE_FLAGS})
 
-target_compile_options(runTests_ii002713 PRIVATE --coverage -O0 -g)
-target_link_options(runTests_ii002713 PRIVATE --coverage)
-target_link_libraries(runTests_ii002713 PRIVATE gcov)
-
-# Register tests
+# Авто-дисквери тестов
 include(GoogleTest)
 gtest_discover_tests(runTests_ii002713)
