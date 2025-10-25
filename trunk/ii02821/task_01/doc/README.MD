@@ -9,8 +9,8 @@
 <br><br><br><br><br>
 <p align="right">Выполнил:</p>
 <p align="right">Студент 2 курса</p>
-<p align="right">Группы ИИ-27</p>
-<p align="right">Лыщенко К.В.</p>
+<p align="right">Группы ИИ-28</p>
+<p align="right">Манцевич Р.С.</p>
 <p align="right">Проверил:</p>
 <p align="right">Иванюк Д. С.</p>
 <br><br><br><br><br>
@@ -42,11 +42,23 @@ Task is to write program (**C++**), which simulates this object temperature.
 # Выполнение задания #
 
 Код программы:
-```
+```cpp
 #include <iostream>
 #include <cmath>
 
-// параметры нелинейной модели
+double nextLinear(double a, double b, double u, double y) {
+    return a * y + b * u;
+}
+
+void simulateLinear(double a, double b, double u, int steps) {
+    std::cout << "Линейная модель" << std::endl;
+    double y = 0.0;
+    for (int i = 0; i < steps; i++) {
+        std::cout << "τ=" << i << ": y=" << y << std::endl;
+        y = nextLinear(a, b, u, y);
+    }
+}
+
 struct NonlinearParams {
     double a;
     double b;
@@ -54,84 +66,70 @@ struct NonlinearParams {
     double d;
 };
 
-// линейная модель
-double Linear(double a, double b, double u, double y) {
-    return a * y + b * u;
+double nextNonlinear(const NonlinearParams& params, double u_prev, double y, double y_prev) {
+    return params.a * y - params.b * (y_prev * y_prev) + params.c * u_prev + params.d * std::sin(u_prev);
 }
 
-// симуляция линейной модели
-void simulateLinear(double a, double b, double u, int steps) {
-    std::cout << "Linear model" << std::endl;
+void simulateNonlinear(double a, double b, double c, double d, double u, int steps) {
+    std::cout << "Нелинейная модель" << std::endl;
     double y = 0.0;
-    for (int i = 0; i < steps; ++i) {
-        std::cout << "Step " << i << ": " << y << std::endl;
-        y = Linear(a, b, u, y);
+    double y_prev = 0.0;
+    double u_prev = 0.0;
+    
+    NonlinearParams params{a, b, c, d};
+    
+    for (int i = 0; i < steps; i++) {
+        std::cout << "τ=" << i << ": y=" << y << std::endl;
+        double y_next = nextNonlinear(params, u_prev, y, y_prev);
+        y_prev = y;
+        y = y_next;
+        u_prev = u; 
     }
-    std::cout << std::endl;
-}
-
-// нелинейная модель
-double Nonlinear(const NonlinearParams& p, double u, double uPrev, double y, double yPrev) {
-    return p.a * y - p.b * (yPrev * yPrev) + p.c * u + p.d * sin(uPrev);
-}
-
-// симуляция нелинейной модели
-void simulateNonlinear(const NonlinearParams& p, double u, int steps) {
-    std::cout << "Nonlinear model" << std::endl;
-    double y = 0.0;
-    double yPrev = 0.0;
-    double uPrev = 0.0;
-    for (int i = 0; i < steps; ++i) {
-        std::cout << "Step " << i << ": " << y << std::endl;
-        double yNext = Nonlinear(p, u, uPrev, y, yPrev);
-        yPrev = y;
-        uPrev = u;
-        y = yNext;
-    }
-    std::cout << std::endl;
 }
 
 int main() {
-    // параметры линейной модели
-    double a1 = 0.1;
+    double a1 = 0.3;
     double b1 = 0.3;
-    double u1 = 0.5;
+    double u1 = 0.9;
     int n1 = 10;
-
     simulateLinear(a1, b1, u1, n1);
+    std::cout << std::endl;
 
-    // параметры нелинейной модели
-    NonlinearParams p{0.7, 0.9, 0.11, 0.13};
-    double u2 = 0.15;
+    double a2 = 0.1;
+    double b2 = 0.2;
+    double c2 = 0.4;
+    double d2 = 0.2;
+    double u2 = 0.8;
     int n2 = 10;
-
-    simulateNonlinear(p, u2, n2);
+    simulateNonlinear(a2, b2, c2, d2, u2, n2);
 
     return 0;
 }
-```     
-```
-Linear model
-Step 0: 0
-Step 1: 0.15
-Step 2: 0.165
-Step 3: 0.1665
-Step 4: 0.16665
-Step 5: 0.166665
-Step 6: 0.166666
-Step 7: 0.166667
-Step 8: 0.166667
-Step 9: 0.166667
-
-Nonlinear model
-Step 0: 0
-Step 1: 0.219391
-Step 2: 0.189501
-Step 3: 0.125258
-Step 4: 0.0912882
-Step 5: 0.0857081
-Step 6: 0.0884224
-Step 7: 0.0912114
-Step 8: 0.0927382
-Step 9: 0.0933562
+  
+Линейная модель
+Time Step | Temperature
+----------|------------
+0         | 0
+1         | 0.27
+2         | 0.351
+3         | 0.3753
+4         | 0.38259
+5         | 0.384777
+6         | 0.385433
+7         | 0.38563
+8         | 0.385689
+9         | 0.385707
+Нелинейная модель
+Time Step | Temperature
+----------|------------
+0         | 0
+1         | 0.568294
+2         | 0.625124
+3         | 0.461392
+4         | 0.431455
+5         | 0.46404
+6         | 0.472645
+7         | 0.467669
+8         | 0.46556
+9         | 0.466284
 ```

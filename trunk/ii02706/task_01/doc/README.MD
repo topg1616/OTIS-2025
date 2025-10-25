@@ -3,14 +3,14 @@
 <p align="center">“Брестский Государственный технический университет”</p>
 <p align="center">Кафедра ИИТ</p>
 <br><br><br><br><br><br><br>
-<p align="center">Лабораторная работа №1</p>
+<p align="center">Лабораторная работа N1</p>
 <p align="center">По дисциплине “Общая теория интеллектуальных систем”</p>
 <p align="center">Тема: “Моделирования температуры объекта”</p>
 <br><br><br><br><br>
 <p align="right">Выполнил:</p>
 <p align="right">Студент 2 курса</p>
 <p align="right">Группы ИИ-27</p>
-<p align="right">Лыщенко К.В.</p>
+<p align="right">Гурин М.Д.</p>
 <p align="right">Проверил:</p>
 <p align="right">Иванюк Д. С.</p>
 <br><br><br><br><br>
@@ -35,7 +35,7 @@ $$\Large y_{\tau+1}=ay_{\tau}-by_{\tau-1}^2+cu_{\tau}+d\sin(u_{\tau-1})$$ (3)
 
 where $\tau$ – time discrete moments ($1,2,3{\dots}n$); $a,b,c,d$ – some constants.
 
-Task is to write program (**C++**), which simulates this object temperature.
+Task is to write program (**Julia**), which simulates this object temperature.
 
 <hr>
 
@@ -45,93 +45,97 @@ Task is to write program (**C++**), which simulates this object temperature.
 ```
 #include <iostream>
 #include <cmath>
+using namespace std;
 
-// параметры нелинейной модели
-struct NonlinearParams {
-    double a;
-    double b;
-    double c;
-    double d;
-};
-
-// линейная модель
-double Linear(double a, double b, double u, double y) {
-    return a * y + b * u;
+void liner_funcnt(double& y1)
+{
+	double first_funct_const = 0.1;
+	double second_funct_const = 0.2;
+	double third_funct_const = 0.3;
+	y1 = first_funct_const * y1 + second_funct_const * third_funct_const;
+	cout << y1 << endl;
 }
 
-// симуляция линейной модели
-void simulateLinear(double a, double b, double u, int steps) {
-    std::cout << "Linear model" << std::endl;
-    double y = 0.0;
-    for (int i = 0; i < steps; ++i) {
-        std::cout << "Step " << i << ": " << y << std::endl;
-        y = Linear(a, b, u, y);
-    }
-    std::cout << std::endl;
+void quadro_funct(double& y2, double& y_previous, bool& first_iteration)
+{
+	double first_funct_const = 0.1;
+	double second_funct_const = 0.2;
+	double third_funct_const = 0.3;
+	double fourth_funct_const = 0.4;
+	double fifth_funct_const = 0.5;
+	if (first_iteration)
+	{
+		y_previous = y2;
+		y2 = first_funct_const * y2 + fourth_funct_const * third_funct_const + fourth_funct_const * sin(third_funct_const); 
+		cout << y2 << endl;
+		first_iteration = false;
+	}
+	else
+	{
+		double buf;
+		buf = first_funct_const * y2 - second_funct_const * pow(y_previous, 2) + fourth_funct_const * third_funct_const + fifth_funct_const * sin(third_funct_const);
+		y_previous = y2;
+		y2 = buf;
+		cout << y2 << endl;
+	}
 }
 
-// нелинейная модель
-double Nonlinear(const NonlinearParams& p, double u, double uPrev, double y, double yPrev) {
-    return p.a * y - p.b * (yPrev * yPrev) + p.c * u + p.d * sin(uPrev);
+
+int main()
+{
+	setlocale(LC_ALL, "RUSSIAN");
+	double y1, y2, y_previous;
+	bool first_iteration = true;
+	cout << "Введите вашу термепаруту: ";
+	cin >> y1;
+	y2 = y1;
+	int n = 20;
+	cout << "Линейная модель:\n" << y1 << endl;
+	for (int i = 0; i < n; i++)
+	{
+    liner_funcnt(y1);
+	}
+	cout << endl << "Квадратичная модель:\n" << y2 << endl;
+	for (int i = 0; i < n; i++)
+	{
+		quadro_funct(y2, y_previous, first_iteration);
+	}
 }
-
-// симуляция нелинейной модели
-void simulateNonlinear(const NonlinearParams& p, double u, int steps) {
-    std::cout << "Nonlinear model" << std::endl;
-    double y = 0.0;
-    double yPrev = 0.0;
-    double uPrev = 0.0;
-    for (int i = 0; i < steps; ++i) {
-        std::cout << "Step " << i << ": " << y << std::endl;
-        double yNext = Nonlinear(p, u, uPrev, y, yPrev);
-        yPrev = y;
-        uPrev = u;
-        y = yNext;
-    }
-    std::cout << std::endl;
-}
-
-int main() {
-    // параметры линейной модели
-    double a1 = 0.1;
-    double b1 = 0.3;
-    double u1 = 0.5;
-    int n1 = 10;
-
-    simulateLinear(a1, b1, u1, n1);
-
-    // параметры нелинейной модели
-    NonlinearParams p{0.7, 0.9, 0.11, 0.13};
-    double u2 = 0.15;
-    int n2 = 10;
-
-    simulateNonlinear(p, u2, n2);
-
-    return 0;
-}
-```     
+``` 
 ```
-Linear model
-Step 0: 0
-Step 1: 0.15
-Step 2: 0.165
-Step 3: 0.1665
-Step 4: 0.16665
-Step 5: 0.166665
-Step 6: 0.166666
-Step 7: 0.166667
-Step 8: 0.166667
-Step 9: 0.166667
+Линейная модель
+3
+0.36
+0.096
+0.0696
+0.06696
+0.066696
+0.0666696
+0.066667
+0.0666667
+0.0666667
+0.0666667
+0.0666667
+0.0666667
+0.0666667
+0.0666667
 
-Nonlinear model
-Step 0: 0
-Step 1: 0.219391
-Step 2: 0.189501
-Step 3: 0.125258
-Step 4: 0.0912882
-Step 5: 0.0857081
-Step 6: 0.0884224
-Step 7: 0.0912114
-Step 8: 0.0927382
-Step 9: 0.0933562
+Квадратичная модель
+3
+0.538208
+-1.47842
+0.0619846
+-0.163186
+0.250673
+0.287501
+0.283943
+0.279623
+0.279598
+0.280082
+0.280133
+0.280084
+0.280074
+0.280078
+0.28008
+0.280079
 ```
