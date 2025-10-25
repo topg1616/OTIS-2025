@@ -55,6 +55,7 @@ TEST(NonlinearModelTest, WithPreviousValues) {
     double expected = 0.5 * 0.5 - 0.2 * (0.2 * 0.2) + 0.3 * 0.4 + 0.1 * std::sin(0.3);
     EXPECT_NEAR(result, expected, 1e-6);
 }
+
 ```
 ## Результаты юнит-тестирования (GoogleTest)
 [==========] Running 4 tests from 2 test suites.
