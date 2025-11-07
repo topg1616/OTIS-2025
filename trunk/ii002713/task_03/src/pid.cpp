@@ -1,27 +1,28 @@
 #include "pid.h"
-#include <algorithm>
 
-// Конструктор: только инициализация коэффициентов, остальные члены через in-class инициализаторы
+// Конструктор ПИД-регулятора
 PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
-    : Kp(Kp_), Ki(Ki_), Kd(Kd_), dt(dt_) {}
+    : Kp(Kp_), Ki(Ki_), Kd(Kd_), dt(dt_) {
+    inv_dt = 1.0 / dt;
+}
 
 // Вычисление управляющего воздействия
 double PID::compute(double setpoint, double measured) noexcept {
     double error = setpoint - measured;
+
+    // Интегральная часть
     integral += error * dt;
-
-    // Анти-виндап: ограничение интеграла
     if (integral > integral_max) integral = integral_max;
-    if (integral < integral_min) integral = integral_min;
+    else if (integral < integral_min) integral = integral_min;
 
-    double derivative = (error - prev_error) / dt;
+    // Производная часть
+    double derivative = (error - prev_error) * inv_dt;
     prev_error = error;
 
+    // Суммарный выход
     double out = Kp * error + Ki * integral + Kd * derivative;
-
-    // Ограничение выхода
     if (out > output_max) out = output_max;
-    if (out < output_min) out = output_min;
+    else if (out < output_min) out = output_min;
 
     return out;
 }
@@ -32,16 +33,16 @@ void PID::reset() noexcept {
     integral = 0.0;
 }
 
-// Установка ограничений выходного сигнала
+// Установка ограничений выхода
 void PID::setOutputLimits(double min, double max) noexcept {
-    if (min > max) return; // некорректный ввод, игнорируем
+    if (min > max) return; // проверка валидности
     output_min = min;
     output_max = max;
 }
 
 // Установка ограничений интеграла
 void PID::setIntegralLimits(double min, double max) noexcept {
-    if (min > max) return; // некорректный ввод, игнорируем
+    if (min > max) return; // проверка валидности
     integral_min = min;
     integral_max = max;
 }
