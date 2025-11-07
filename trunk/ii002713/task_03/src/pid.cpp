@@ -17,7 +17,7 @@ PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
 double PID::compute(double setpoint, double measured) noexcept {
     double error = setpoint - measured;
 
-    // Integral term (anti-windup)
+    // Integral term with anti-windup
     integral += error * dt;
     integral = std::clamp(integral, integral_min, integral_max);
 
@@ -54,6 +54,6 @@ void PID::setIntegralLimits(double min, double max) noexcept {
     integral_min = min;
     integral_max = max;
 
-    // ensure current integral respects new bounds
+    // Ensure current integral respects new bounds
     integral = std::clamp(integral, integral_min, integral_max);
 }
