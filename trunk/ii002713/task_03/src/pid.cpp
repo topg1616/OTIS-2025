@@ -1,5 +1,6 @@
 #include "pid.h"
 #include <algorithm> // std::clamp
+#include <iostream>  // std::cerr for warnings
 
 PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
     : Kp(Kp_), Ki(Ki_), Kd(Kd_), dt(dt_), inv_dt(1.0 / dt_) {}
@@ -8,34 +9,43 @@ PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
 double PID::compute(double setpoint, double measured) noexcept {
     double error = setpoint - measured;
 
+    // Integral term with anti-windup
     integral += error * dt;
-    integral = std::clamp(integral, integral_min, integral_max); // anti-windup
+    if (integral > integral_max) integral = integral_max;
+    else if (integral < integral_min) integral = integral_min;
 
+    // Derivative term (use inv_dt for performance)
     double derivative = (error - prev_error) * inv_dt;
     prev_error = error;
 
     double out = Kp * error + Ki * integral + Kd * derivative;
-    out = std::clamp(out, output_min, output_max);
+
+    // Output limits (clamping)
+    if (out > output_max) out = output_max;
+    else if (out < output_min) out = output_min;
 
     return out;
 }
 
-// Reset integral and previous error
 void PID::reset() noexcept {
     prev_error = 0.0;
     integral = 0.0;
 }
 
-// Set output limits
 void PID::setOutputLimits(double min, double max) noexcept {
-    if (min > max) return; // silent failure documented in header
+    if (min > max) {
+        std::cerr << "PID::setOutputLimits ignored invalid limits: min > max\n";
+        return;
+    }
     output_min = min;
     output_max = max;
 }
 
-// Set integral limits
 void PID::setIntegralLimits(double min, double max) noexcept {
-    if (min > max) return; // silent failure documented in header
+    if (min > max) {
+        std::cerr << "PID::setIntegralLimits ignored invalid limits: min > max\n";
+        return;
+    }
     integral_min = min;
     integral_max = max;
 }

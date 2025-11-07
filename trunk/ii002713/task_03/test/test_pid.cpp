@@ -19,8 +19,8 @@ TEST(PIDTest, ComputeStabilizesAtZeroError) {
     PID pid(1.0, 1.0, 0.05, 0.1);
     pid.compute(1.0, 0.0);
     double u = pid.compute(0.0, 0.0);
-    // We expect that the signal will not be excessively large — allowable delta is 5.0
-    EXPECT_NEAR(u, 0.0, 5.0);
+    // Ожидаем, что сигнал будет близок к нулю — допустимая дельта 1.0
+    EXPECT_NEAR(u, 0.0, 1.0);
 }
 
 TEST(SystemTest, PIDControlsModel) {

@@ -5,28 +5,32 @@
  * @brief Simple dynamic model for simulation purposes.
  *
  * The Model class represents a system whose state is described by the variable @c y.
- * The state @c y can be initialized and updated via the provided methods.
+ * You can initialize state and update it using update(u) (here model is y += u).
  */
 class Model {
 private:
     /**
      * @brief Current state of the model.
-     *
-     * Represents the output or state variable of the model.
      */
-    double y{0.0};  // in-class initialization
+    double y{0.0};
 
 public:
     /**
-     * @brief Construct a Model with optional initial value
-     * @param y0 Initial value of the state
+     * @brief Construct a Model with optional initial value.
+     * @param y0 initial state (default 0.0)
      */
     explicit Model(double y0 = 0.0) noexcept;
 
-    /// Get current state
+    /**
+     * @brief Get current state.
+     * @return current y
+     */
     double getY() const noexcept;
 
-    /// Update state by control input u
+    /**
+     * @brief Update state with input u (simple integrator: y += u).
+     * @param u input value
+     */
     void update(double u) noexcept;
 };
 
