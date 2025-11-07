@@ -1,29 +1,35 @@
 #include <iostream>
-#include <iomanip>
-#include "model.h"
 #include "pid.h"
+#include "model.h"
 
+/**
+ * @brief Точка входа в программу.
+ *
+ * Выполняет моделирование замкнутой системы «ПИД-регулятор – объект управления».
+ * Печатает изменение выходного сигнала по шагам.
+ *
+ * @return Код завершения программы.
+ */
 int main() {
-    double setpoint = 10.0;    // Желаемое значение
-    PID pid(0.5, 0.1);         // Коэффициенты регулятора
-    Model model(0.0);          // Начальное состояние модели
+    PID pid(2.0, 1.0, 0.1);  // ПИД-регулятор с параметрами K=2.0, T=1.0, dt=0.1
+    Model model;             // Модель управляемого объекта
 
-    std::cout << std::fixed << std::setprecision(3);
-    std::cout << "Step\tControl (u)\tOutput (y)\tError\n";
+    const double setpoint = 1.0;  // Желаемое значение выхода
+    double time = 0.0;            // Текущее время
+    const double dt = 0.1;        // Шаг интегрирования
+    const int steps = 100;        // Количество итераций моделирования
 
-    for (int step = 0; step < 50; ++step) {
-        double error = setpoint - model.getY(); // ошибка
-        double control = pid.compute(error);    // сигнал управления
-        model.update(control);                  // реакция модели
+    std::cout << "Time\tOutput\n";
 
-        std::cout << step << "\t" 
-                  << control << "\t\t" 
-                  << model.getY() << "\t\t" 
-                  << error << "\n";
+    for (int i = 0; i < steps; ++i) {
+        double y = model.getOutput();
+        double error = setpoint - y;
+        double u = pid.compute(error);
+        model.update(u, dt);
+
+        std::cout << time << "\t" << y << "\n";
+        time += dt;
     }
-
-    std::cout << "\nFinal output y ≈ " << model.getY() 
-              << " (target = " << setpoint << ")\n";
 
     return 0;
 }

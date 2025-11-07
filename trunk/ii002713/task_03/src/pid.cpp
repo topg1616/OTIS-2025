@@ -1,25 +1,17 @@
 #include "pid.h"
 
-PID::PID(double k, double t) {
-    K = k;
-    T = t;
-}
+PID::PID(double k, double t, double delta_t)
+    : K(k), T(t), dt(delta_t), e0(0.0), e1(0.0), e2(0.0), u(0.0) {}
 
 double PID::compute(double e) {
-    // Пример дискретного ПИД
-    const double kp = K;
-    const double ki = K / (2.0 * T);
-    const double kd = K * T / 2.0;
-
-    u += kp * (e - e1) + ki * (e + e1) + kd * (e - 2 * e1 + e2);
-
     e2 = e1;
-    e1 = e;
+    e1 = e0;
     e0 = e;
 
-    return u;
-}
+    // Дискретная реализация ПИД-регулятора (позиционная форма)
+    double de = e0 - e1;
+    double ie = e0 + e1 + e2;
+    u += K * (de + (dt / T) * ie);
 
-double PID::getU() const {
     return u;
 }

@@ -1,15 +1,13 @@
 #include "model.h"
 
-Model::Model(double y0) {
-    y = y0;
-}
+Model::Model() : y(0.0) {}
 
-double Model::getY() const {
+double Model::update(double u, double dt) {
+    // Простая линейная модель первого порядка: dy/dt = -y + u
+    y += dt * (-y + u);
     return y;
 }
 
-void Model::update(double u) {
-    // Простая инерционная модель первого порядка
-    const double a = 0.1;
-    y += a * (u - y);
+double Model::getOutput() const {
+    return y;
 }
