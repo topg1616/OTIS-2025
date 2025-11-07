@@ -35,7 +35,7 @@ jobs:
         working-directory: OTIS-2025/trunk/ii002713/task_03/src
         run: cmake --build build --target doc
       - name: Deploy documentation to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@373f7d2c1b4cc6df8eab6789b1c77dbbdbcd6a2b
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: OTIS-2025/trunk/ii002713/task_03/doc/html
