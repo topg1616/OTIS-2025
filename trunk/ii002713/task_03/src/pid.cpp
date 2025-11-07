@@ -1,28 +1,33 @@
 #include "pid.h"
 #include <algorithm> // std::clamp
-#include <iostream>  // std::cerr for warnings
+#include <iostream>  // std::cerr
 
 PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
-    : Kp(Kp_), Ki(Ki_), Kd(Kd_), dt(dt_), inv_dt(1.0 / dt_) {}
+    : Kp(Kp_), Ki(Ki_), Kd(Kd_), dt(dt_) {
+    if (dt_ <= 0.0) {
+        std::cerr << "PID::PID: invalid dt <= 0, using DEFAULT_DT\n";
+        dt = PID::DEFAULT_DT;
+    } else {
+        dt = dt_;
+    }
+    inv_dt = 1.0 / dt;
+}
 
 // Compute control signal
 double PID::compute(double setpoint, double measured) noexcept {
     double error = setpoint - measured;
 
-    // Integral term with anti-windup
+    // Integral term (anti-windup)
     integral += error * dt;
-    if (integral > integral_max) integral = integral_max;
-    else if (integral < integral_min) integral = integral_min;
+    integral = std::clamp(integral, integral_min, integral_max);
 
-    // Derivative term (use inv_dt for performance)
+    // Derivative term
     double derivative = (error - prev_error) * inv_dt;
     prev_error = error;
 
+    // PID output with clamping
     double out = Kp * error + Ki * integral + Kd * derivative;
-
-    // Output limits (clamping)
-    if (out > output_max) out = output_max;
-    else if (out < output_min) out = output_min;
+    out = std::clamp(out, output_min, output_max);
 
     return out;
 }
@@ -48,4 +53,7 @@ void PID::setIntegralLimits(double min, double max) noexcept {
     }
     integral_min = min;
     integral_max = max;
+
+    // ensure current integral respects new bounds
+    integral = std::clamp(integral, integral_min, integral_max);
 }

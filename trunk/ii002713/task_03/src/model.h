@@ -2,10 +2,10 @@
 #define MODEL_H
 
 /**
- * @brief Simple dynamic model for simulation purposes.
+ * @brief Simple dynamic model used for simulation.
  *
- * The Model class represents a system whose state is described by the variable @c y.
- * You can initialize state and update it using update(u) (here model is y += u).
+ * The Model class represents a system with a single state variable y.
+ * The model used here is a simple integrator: y <- y + u.
  */
 class Model {
 private:
@@ -16,20 +16,20 @@ private:
 
 public:
     /**
-     * @brief Construct a Model with optional initial value.
-     * @param y0 initial state (default 0.0)
+     * @brief Construct the model with an initial state.
+     * @param y0 initial state value (default 0.0)
      */
     explicit Model(double y0 = 0.0) noexcept;
 
     /**
      * @brief Get current state.
-     * @return current y
+     * @return current value of y
      */
     double getY() const noexcept;
 
     /**
-     * @brief Update state with input u (simple integrator: y += u).
-     * @param u input value
+     * @brief Update the state by adding input u (y += u).
+     * @param u input
      */
     void update(double u) noexcept;
 };
