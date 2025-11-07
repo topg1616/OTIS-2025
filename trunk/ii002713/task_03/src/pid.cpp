@@ -42,3 +42,4 @@ void PID::setIntegralLimits(double min, double max) noexcept {
         // Invalid input: do not update limits
         return;
     }
+}
