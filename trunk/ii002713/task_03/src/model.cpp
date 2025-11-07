@@ -1,14 +1,14 @@
 #include "model.h"
 
-// Constructor
-Model::Model(double y0) noexcept : y(y0) {}
+Model::Model(double y0) noexcept
+    : y(y0) {}
 
-// Get current state
+// Получение текущего состояния
 double Model::getY() const noexcept {
     return y;
 }
 
-// Update state
+// Обновление состояния (интегратор)
 void Model::update(double u) noexcept {
     y += u;
 }

@@ -8,7 +8,7 @@
  * @brief PID controller class.
  *
  * Implements a discrete-time PID controller with anti-windup
- * and configurable output/integral limits.
+ * and configurable output and integral limits.
  */
 class PID {
 private:
@@ -30,6 +30,9 @@ private:
 public:
     /**
      * @brief Construct a PID controller.
+     *
+     * Initializes gains and time step. If dt_ <= 0.0, DEFAULT_DT is used.
+     *
      * @param Kp_ Proportional gain
      * @param Ki_ Integral gain
      * @param Kd_ Derivative gain
@@ -39,6 +42,10 @@ public:
 
     /**
      * @brief Compute control signal based on setpoint and measurement.
+     *
+     * Calculates PID output with anti-windup for the integral term
+     * and clamps the output to [output_min, output_max].
+     *
      * @param setpoint Desired value
      * @param measured Measured value
      * @return Control output
@@ -47,11 +54,14 @@ public:
 
     /**
      * @brief Reset integral and previous error.
+     *
+     * Resets the PID controller state.
      */
     void reset() noexcept;
 
     /**
      * @brief Set output limits.
+     *
      * @param min Minimum output
      * @param max Maximum output
      */
@@ -59,6 +69,7 @@ public:
 
     /**
      * @brief Set integral limits.
+     *
      * @param min Minimum integral
      * @param max Maximum integral
      */

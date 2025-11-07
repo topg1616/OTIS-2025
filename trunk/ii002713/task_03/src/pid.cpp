@@ -2,40 +2,66 @@
 #include <algorithm> // std::clamp
 #include <iostream>  // std::cerr
 
+/**
+ * @brief Construct a PID controller.
+ *
+ * Validates the time step and initializes internal state.
+ */
 PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
-    : Kp(Kp_),
-      Ki(Ki_),
-      Kd(Kd_),
-      dt((dt_ <= 0.0) ? (std::cerr << "PID::PID: invalid dt <= 0, using DEFAULT_DT\n", DEFAULT_DT) : dt_),
-      inv_dt(1.0 / ((dt_ <= 0.0) ? DEFAULT_DT : dt_)) {}
+    : Kp(Kp_), Ki(Ki_), Kd(Kd_), prev_error(0.0), integral(0.0)
+{
+    if (dt_ <= 0.0) {
+        std::cerr << "PID::PID: invalid dt <= 0, using DEFAULT_DT\n";
+        dt = DEFAULT_DT;
+    } else {
+        dt = dt_;
+    }
+    inv_dt = 1.0 / dt;
+}
 
-// Вычисление управляющего сигнала
-double PID::compute(double setpoint, double measured) noexcept {
+/**
+ * @brief Compute the PID control signal.
+ *
+ * @param setpoint Desired value
+ * @param measured Measured value
+ * @return Control output
+ */
+double PID::compute(double setpoint, double measured) noexcept
+{
     double error = setpoint - measured;
 
-    // Интегральная составляющая с анти-винд-ап
+    // Integral term with anti-windup
     integral += error * dt;
     integral = std::clamp(integral, integral_min, integral_max);
 
-    // Дифференциальная составляющая
+    // Derivative term
     double derivative = (error - prev_error) * inv_dt;
     prev_error = error;
 
-    // PID-сигнал с ограничением
+    // PID output with clamping
     double out = Kp * error + Ki * integral + Kd * derivative;
-    out = std::clamp(out, output_min, output_max);
-
-    return out;
+    return std::clamp(out, output_min, output_max);
 }
 
-// Сброс интеграла и предыдущей ошибки
-void PID::reset() noexcept {
+/**
+ * @brief Reset the PID controller.
+ *
+ * Clears the integral and previous error.
+ */
+void PID::reset() noexcept
+{
     prev_error = 0.0;
     integral = 0.0;
 }
 
-// Установка лимитов на выход
-void PID::setOutputLimits(double min, double max) noexcept {
+/**
+ * @brief Set output limits.
+ *
+ * @param min Minimum output
+ * @param max Maximum output
+ */
+void PID::setOutputLimits(double min, double max) noexcept
+{
     if (min > max) {
         std::cerr << "PID::setOutputLimits ignored invalid limits: min > max\n";
         return;
@@ -44,8 +70,14 @@ void PID::setOutputLimits(double min, double max) noexcept {
     output_max = max;
 }
 
-// Установка лимитов на интеграл
-void PID::setIntegralLimits(double min, double max) noexcept {
+/**
+ * @brief Set integral limits.
+ *
+ * @param min Minimum integral
+ * @param max Maximum integral
+ */
+void PID::setIntegralLimits(double min, double max) noexcept
+{
     if (min > max) {
         std::cerr << "PID::setIntegralLimits ignored invalid limits: min > max\n";
         return;
@@ -53,6 +85,6 @@ void PID::setIntegralLimits(double min, double max) noexcept {
     integral_min = min;
     integral_max = max;
 
-    // Обеспечиваем, что текущий интеграл находится в новых границах
+    // Ensure current integral respects new bounds
     integral = std::clamp(integral, integral_min, integral_max);
 }
