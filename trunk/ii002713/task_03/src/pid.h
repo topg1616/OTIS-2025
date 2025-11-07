@@ -1,36 +1,28 @@
 #ifndef PID_H
 #define PID_H
 
-#include <cmath>
-
-/**
- * @brief Класс ПИД-регулятора (пропорционально-интегрально-дифференциального).
- */
 class PID {
 private:
-    double K = 1.0;    // Коэффициент усиления
-    double T = 1.0;    // Постоянная времени
-    double dt = 0.1;   // Шаг дискретизации
-    double e0 = 0.0;   // Текущая ошибка
-    double e1 = 0.0;   // Предыдущая ошибка
-    double e2 = 0.0;   // Ошибка до предыдущей
-    double u = 0.0;    // Управляющее воздействие
+    double Kp;
+    double Ki;
+    double Kd;
+    double dt;
+    double prev_error;
+    double integral;
+    double output_min;
+    double output_max;
+    double integral_min;
+    double integral_max;
 
 public:
-    /**
-     * @brief Конструктор ПИД-регулятора.
-     * @param k Коэффициент усиления.
-     * @param t Постоянная времени.
-     * @param dt Шаг дискретизации.
-     */
-    explicit PID(double k = 1.0, double t = 1.0, double dt = 0.1);
+    explicit PID(double Kp_ = 0.0, double Ki_ = 0.0, double Kd_ = 0.0, double dt_ = 0.1) noexcept;
 
-    /**
-     * @brief Вычисляет новое управляющее воздействие.
-     * @param e Текущая ошибка (задание - выход модели).
-     * @return Новое значение управляющего сигнала.
-     */
-    double compute(double e);
+    double compute(double setpoint, double measured) noexcept;
+    void reset() noexcept;
+
+    // Опционально: ограничения выхода/интеграла
+    void setOutputLimits(double min, double max) noexcept;
+    void setIntegralLimits(double min, double max) noexcept;
 };
 
 #endif // PID_H

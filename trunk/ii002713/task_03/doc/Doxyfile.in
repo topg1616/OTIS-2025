@@ -1,49 +1,27 @@
-# Конфигурационный файл Doxygen для проекта ii002713_task_03
-
-# Основная информация
 PROJECT_NAME           = "ii002713_task_03"
 PROJECT_NUMBER         = "Лабораторная работа №3"
 PROJECT_BRIEF          = "Модель системы с PID-регулятором"
 OUTPUT_LANGUAGE        = Russian
-OPTIMIZE_OUTPUT_FOR_C    = NO
-OPTIMIZE_OUTPUT_JAVA     = NO
-OPTIMIZE_FOR_FORTRAN     = NO
-OPTIMIZE_OUTPUT_VHDL     = NO
 
-# Входные файлы
-INPUT                  = @CMAKE_SOURCE_DIR@/src @CMAKE_SOURCE_DIR@/../doc/readme.md
+INPUT                  = @CMAKE_SOURCE_DIR@/src @CMAKE_SOURCE_DIR@/doc/readme.md
 FILE_PATTERNS          = *.h *.cpp *.md
 RECURSIVE              = NO
 
-# Выходные директории
-OUTPUT_DIRECTORY       = @CMAKE_SOURCE_DIR@/../doc/html
-CREATE_SUBDIRS         = NO
+OUTPUT_DIRECTORY       = @CMAKE_SOURCE_DIR@/doc/html
 GENERATE_HTML          = YES
 GENERATE_LATEX         = NO
 HTML_OUTPUT            = .
 
-# Стиль и структура
 EXTRACT_ALL            = YES
 EXTRACT_PRIVATE        = NO
 EXTRACT_STATIC         = NO
+
 HAVE_DOT               = YES
-CALL_GRAPH             = NO
-CALLER_GRAPH           = NO
-CLASS_DIAGRAMS         = YES
 DOT_IMAGE_FORMAT       = svg
 DOT_TRANSPARENT        = YES
-DOT_MULTI_TARGETS      = YES
 GENERATE_TREEVIEW      = YES
 FULL_PATH_NAMES        = NO
 STRIP_FROM_PATH        = @CMAKE_SOURCE_DIR@
 
-# Главная страница
-USE_MDFILE_AS_MAINPAGE = @CMAKE_SOURCE_DIR@/../doc/readme.md
-
-# Внешний вид
-HTML_COLORSTYLE_HUE    = 200
-HTML_COLORSTYLE_SAT    = 150
-HTML_COLORSTYLE_GAMMA  = 80
-GENERATE_INDEX         = YES
-GENERATE_TREEVIEW      = YES
+USE_MDFILE_AS_MAINPAGE = @CMAKE_SOURCE_DIR@/doc/readme.md
 SEARCHENGINE           = YES

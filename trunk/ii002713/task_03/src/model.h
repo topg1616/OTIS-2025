@@ -1,36 +1,14 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <cmath>
-
-/**
- * @brief Класс математической модели объекта управления.
- *
- * Модель описывает простую линейную динамическую систему первого порядка.
- */
 class Model {
 private:
-    double y = 0.0;  // Текущее значение выходного сигнала
+    double y = 0.0;
 
 public:
-    /**
-     * @brief Конструктор по умолчанию.
-     */
-    Model();
-
-    /**
-     * @brief Вычисляет новое значение выходного сигнала модели.
-     * @param u Управляющее воздействие.
-     * @param dt Шаг интегрирования.
-     * @return Новое значение выходного сигнала.
-     */
-    double update(double u, double dt);
-
-    /**
-     * @brief Возвращает текущее значение выходного сигнала.
-     * @return Значение выходного сигнала.
-     */
-    double getOutput() const;
+    explicit Model(double y0 = 0.0) noexcept;
+    double getY() const noexcept;
+    void update(double u) noexcept;
 };
 
 #endif // MODEL_H

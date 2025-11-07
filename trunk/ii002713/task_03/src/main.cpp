@@ -2,33 +2,19 @@
 #include "pid.h"
 #include "model.h"
 
-/**
- * @brief Точка входа в программу.
- *
- * Выполняет моделирование замкнутой системы «ПИД-регулятор – объект управления».
- * Печатает изменение выходного сигнала по шагам.
- *
- * @return Код завершения программы.
- */
 int main() {
-    PID pid(2.0, 1.0, 0.1);  // ПИД-регулятор с параметрами K=2.0, T=1.0, dt=0.1
-    Model model;             // Модель управляемого объекта
+    PID pid(2.0, 1.0, 0.05, 0.1); // Kp, Ki, Kd, dt
+    pid.setOutputLimits(-10.0, 10.0);
+    pid.setIntegralLimits(-5.0, 5.0);
 
-    const double setpoint = 1.0;  // Желаемое значение выхода
-    double time = 0.0;            // Текущее время
-    const double dt = 0.1;        // Шаг интегрирования
-    const int steps = 100;        // Количество итераций моделирования
+    Model model;
+    const double setpoint = 1.0;
 
-    std::cout << "Time\tOutput\n";
-
-    for (int i = 0; i < steps; ++i) {
-        double y = model.getOutput();
-        double error = setpoint - y;
-        double u = pid.compute(error);
-        model.update(u, dt);
-
-        std::cout << time << "\t" << y << "\n";
-        time += dt;
+    for (int i = 0; i < 50; ++i) {
+        double measured = model.getY();
+        double u = pid.compute(setpoint, measured);
+        model.update(u);
+        std::cout << "Step " << i << ": y = " << model.getY() << ", u = " << u << std::endl;
     }
 
     return 0;

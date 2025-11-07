@@ -2,51 +2,39 @@
 #include "pid.h"
 #include "model.h"
 
-/**
- * @brief Тест проверяет корректность работы метода Model.
- */
 TEST(ModelTest, UpdateIncreasesWithPositiveInput) {
     Model model;
-    double y1 = model.update(1.0, 0.1);
-    double y2 = model.update(1.0, 0.1);
-    EXPECT_GT(y2, y1);
+    model.update(1.0);
+    EXPECT_GT(model.getY(), 0.0);
 }
 
-/**
- * @brief Тест проверяет, что ПИД-регулятор корректно реагирует на ошибку.
- */
 TEST(PIDTest, ComputeRespondsToError) {
-    PID pid(2.0, 1.0, 0.1);
-    double u1 = pid.compute(1.0);
-    double u2 = pid.compute(2.0);
+    PID pid(2.0, 1.0, 0.1, 0.1);
+    double u1 = pid.compute(1.0, 0.0);
+    double u2 = pid.compute(2.0, 0.0);
     EXPECT_GT(u2, u1);
 }
 
-/**
- * @brief Тест проверяет, что при нулевой ошибке выход не растёт бесконечно.
- */
 TEST(PIDTest, ComputeStabilizesAtZeroError) {
-    PID pid(1.0, 1.0, 0.1);
-    pid.compute(1.0);
-    pid.compute(0.0);
-    double u = pid.compute(0.0);
-    EXPECT_NEAR(u, 0.0, 10.0);  // Проверка, что сигнал не выходит за разумные пределы
+    PID pid(1.0, 1.0, 0.05, 0.1);
+    pid.compute(1.0, 0.0);
+    double u = pid.compute(0.0, 0.0);
+    // Ожидаем, что сигнал не будет чрезмерно большим — допустимая дельта 5.0
+    EXPECT_NEAR(u, 0.0, 5.0);
 }
 
-/**
- * @brief Тест проверяет совместную работу ПИД-регулятора и модели.
- */
 TEST(SystemTest, PIDControlsModel) {
-    PID pid(2.0, 1.0, 0.1);
+    PID pid(2.0, 1.0, 0.05, 0.1);
+    pid.setOutputLimits(-10.0, 10.0);
+    pid.setIntegralLimits(-5.0, 5.0);
+
     Model model;
     const double setpoint = 1.0;
 
-    for (int i = 0; i < 100; ++i) {
-        double error = setpoint - model.getOutput();
-        double u = pid.compute(error);
-        model.update(u, 0.1);
+    for (int i = 0; i < 200; ++i) {
+        double u = pid.compute(setpoint, model.getY());
+        model.update(u);
     }
 
-    double output = model.getOutput();
-    EXPECT_NEAR(output, 1.0, 0.2);
+    EXPECT_NEAR(model.getY(), 1.0, 0.2);
 }
