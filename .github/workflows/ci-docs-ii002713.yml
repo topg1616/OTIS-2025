@@ -23,26 +23,19 @@ jobs:
           sudo apt-get install -y doxygen graphviz cmake g++ make
 
       - name: Configure project
-        working-directory: Otis-2025/trunk/ii002713/task_03/src
+        working-directory: OTIS-2025/trunk/ii002713/task_03/src
         run: cmake -B build -S .
-
       - name: Build project
-        working-directory: Otis-2025/trunk/ii002713/task_03/src
+        working-directory: OTIS-2025/trunk/ii002713/task_03/src
         run: cmake --build build
-
       - name: Run tests
-        working-directory: Otis-2025/trunk/ii002713/task_03/src/build
+        working-directory: OTIS-2025/trunk/ii002713/task_03/src/build
         run: ctest --output-on-failure
-
       - name: Generate Doxygen documentation
-        working-directory: Otis-2025/trunk/ii002713/task_03/src
+        working-directory: OTIS-2025/trunk/ii002713/task_03/src
         run: cmake --build build --target doc
-
       - name: Deploy documentation to GitHub Pages
-        uses: peaceiris/actions-gh-pages@373f7d2c1b4cc6df8eab6789b1c77dbbdbcd6a2b  # v3.9.3
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: Otis-2025/trunk/ii002713/task_03/doc/html
-          publish_branch: gh-pages
-          keep_files: false
-
+          publish_dir: OTIS-2025/trunk/ii002713/task_03/doc/html

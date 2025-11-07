@@ -17,7 +17,7 @@ double PID::compute(double setpoint, double measured) noexcept {
 
     double out = Kp * error + Ki * integral + Kd * derivative;
 
-    // Ограничиваем выход
+    // Limit output
     if (out > output_max) out = output_max;
     if (out < output_min) out = output_min;
 
@@ -30,11 +30,15 @@ void PID::reset() noexcept {
 }
 
 void PID::setOutputLimits(double min, double max) noexcept {
+    if (min > max) {
+        // Invalid input: do not update limits
+        return;
+    }
     output_min = min;
     output_max = max;
 }
-
 void PID::setIntegralLimits(double min, double max) noexcept {
-    integral_min = min;
-    integral_max = max;
-}
+    if (min > max) {
+        // Invalid input: do not update limits
+        return;
+    }
