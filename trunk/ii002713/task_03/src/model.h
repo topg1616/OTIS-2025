@@ -14,25 +14,19 @@ private:
      *
      * Represents the output or state variable of the model.
      */
-    double y{0.0};  // in-class инициализация
+    double y{0.0};  // in-class initialization
 
 public:
     /**
-     * @brief Construct a new Model object
-     * @param y0 Initial state value (default 0.0)
+     * @brief Construct a Model with optional initial value
+     * @param y0 Initial value of the state
      */
     explicit Model(double y0 = 0.0) noexcept;
 
-    /**
-     * @brief Get the current state
-     * @return Current value of y
-     */
+    /// Get current state
     double getY() const noexcept;
 
-    /**
-     * @brief Update the state with input u
-     * @param u Input to update the model
-     */
+    /// Update state by control input u
     void update(double u) noexcept;
 };
 

@@ -1,42 +1,50 @@
 #ifndef PID_H
 #define PID_H
 
+/**
+ * @brief Simple PID controller class.
+ *
+ * Implements a discrete-time PID controller with anti-windup and output limits.
+ */
 class PID {
 private:
-    double Kp{};
-    double Ki{};
-    double Kd{};
-    double dt{};
-    double inv_dt{}; // хранит 1/dt для оптимизации вычислений
-    double prev_error{}; // предыдущая ошибка
-    double integral{};   // интеграл ошибки
+    double Kp{0.0};
+    double Ki{0.0};
+    double Kd{0.0};
+    double dt{0.1};
+    double inv_dt{10.0};  // 1/dt for faster derivative calculation
+
+    double prev_error{0.0};
+    double integral{0.0};
 
     double output_min{-1e9};
     double output_max{1e9};
     double integral_min{-1e6};
     double integral_max{1e6};
 
-    static constexpr double DEFAULT_DT = 0.1;
-
 public:
-    explicit PID(double Kp_ = 0.0, double Ki_ = 0.0, double Kd_ = 0.0, double dt_ = DEFAULT_DT) noexcept;
+    explicit PID(double Kp_ = 0.0, double Ki_ = 0.0, double Kd_ = 0.0, double dt_ = 0.1) noexcept;
 
+    /**
+     * @brief Compute control signal
+     * @param setpoint Desired value
+     * @param measured Measured value
+     * @return Control output
+     */
     double compute(double setpoint, double measured) noexcept;
+
+    /// Reset integral and previous error
     void reset() noexcept;
 
     /**
      * @brief Set output limits
-     * @param min Minimum output
-     * @param max Maximum output
-     * @note If min > max, limits are not updated
+     * @note If min > max, limits are not updated (silent failure)
      */
     void setOutputLimits(double min, double max) noexcept;
 
     /**
      * @brief Set integral limits (anti-windup)
-     * @param min Minimum integral
-     * @param max Maximum integral
-     * @note If min > max, limits are not updated
+     * @note If min > max, limits are not updated (silent failure)
      */
     void setIntegralLimits(double min, double max) noexcept;
 };
