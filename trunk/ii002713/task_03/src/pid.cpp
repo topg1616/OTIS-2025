@@ -2,14 +2,13 @@
 #include <algorithm>
 
 PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
-    : Kp(Kp_), Ki(Ki_), Kd(Kd_), dt(dt_), prev_error(0.0), integral(0.0),
-      output_min(-1e9), output_max(1e9), integral_min(-1e6), integral_max(1e6) {}
+    : Kp(Kp_), Ki(Ki_), Kd(Kd_), dt(dt_) {}  // остальные члены используют in-class инициализаторы
 
 double PID::compute(double setpoint, double measured) noexcept {
     double error = setpoint - measured;
     integral += error * dt;
 
-    // Анти-виндап: ограничиваем интеграл
+    // Анти-виндап
     if (integral > integral_max) integral = integral_max;
     if (integral < integral_min) integral = integral_min;
 
