@@ -1,0 +1,58 @@
+# Doxyfile.in — шаблон для генерации документации Doxygen
+
+# Название проекта
+PROJECT_NAME           = "PID Controller Simulation (ii002713)"
+PROJECT_BRIEF          = "Лабораторная работа №3: Моделирование и управление процессом с использованием PID-регулятора"
+PROJECT_NUMBER         = "v1.0"
+
+# Автор
+PROJECT_LOGO           =
+OUTPUT_LANGUAGE        = Russian
+OUTPUT_DIRECTORY       = @CMAKE_SOURCE_DIR@/../doc/html
+
+# Исходники проекта (все .h и .cpp в src/)
+INPUT                  = @CMAKE_SOURCE_DIR@
+FILE_PATTERNS          = *.h *.cpp
+RECURSIVE              = NO
+
+# Генерация диаграмм
+HAVE_DOT               = YES
+DOT_PATH               =
+DOT_IMAGE_FORMAT       = svg
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
+CLASS_DIAGRAMS         = YES
+UML_LOOK               = YES
+
+# Форматы вывода
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+HTML_OUTPUT            = html
+
+# Кодировка
+INPUT_ENCODING         = UTF-8
+
+# Оформление
+HTML_COLORSTYLE_HUE    = 220
+HTML_COLORSTYLE_SAT    = 120
+HTML_COLORSTYLE_GAMMA  = 80
+HTML_TIMESTAMP         = YES
+
+# Отображение приватных элементов
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = NO
+EXTRACT_ALL            = YES
+
+# Ссылки
+FULL_PATH_NAMES        = NO
+STRIP_FROM_PATH        = @CMAKE_SOURCE_DIR@
+STRIP_FROM_INC_PATH    = @CMAKE_SOURCE_DIR@
+
+# Генерация оглавления и поиска
+GENERATE_TREEVIEW      = YES
+SEARCHENGINE           = YES
+
+# Комментарий к генерации
+QUIET                  = NO
+WARN_IF_UNDOCUMENTED   = YES
+WARN_LOGFILE           = doxygen_warnings.log

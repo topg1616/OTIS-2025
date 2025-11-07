@@ -1,0 +1,41 @@
+name: Build Doxygen Docs (ii002713)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz cmake g++
+
+      - name: Configure and build project
+        working-directory: trunk/ii002713/task_03/src
+        run: |
+          cmake -S . -B build
+          cmake --build build
+
+      - name: Generate Doxygen documentation
+        working-directory: trunk/ii002713/task_03/src
+        run: cmake --build build --target doc
+
+      - name: Upload documentation as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: doxygen-docs-ii002713
+          path: trunk/ii002713/task_03/doc/html
+
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: trunk/ii002713/task_03/doc/html
