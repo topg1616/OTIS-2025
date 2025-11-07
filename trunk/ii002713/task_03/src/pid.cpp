@@ -1,28 +1,24 @@
 #include "pid.h"
+#include <algorithm> // std::clamp
 
-// Конструктор ПИД-регулятора
 PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
-    : Kp(Kp_), Ki(Ki_), Kd(Kd_), dt(dt_) {
-    inv_dt = 1.0 / dt;
-}
+    : Kp(Kp_), Ki(Ki_), Kd(Kd_), dt(dt_), inv_dt(1.0 / dt_) {}
 
 // Вычисление управляющего воздействия
 double PID::compute(double setpoint, double measured) noexcept {
     double error = setpoint - measured;
 
-    // Интегральная часть
+    // Интеграл с ограничением (анти-виндап)
     integral += error * dt;
-    if (integral > integral_max) integral = integral_max;
-    else if (integral < integral_min) integral = integral_min;
+    integral = std::clamp(integral, integral_min, integral_max);
 
-    // Производная часть
+    // Производная
     double derivative = (error - prev_error) * inv_dt;
     prev_error = error;
 
-    // Суммарный выход
+    // ПИД-выход с ограничением
     double out = Kp * error + Ki * integral + Kd * derivative;
-    if (out > output_max) out = output_max;
-    else if (out < output_min) out = output_min;
+    out = std::clamp(out, output_min, output_max);
 
     return out;
 }
