@@ -17,19 +17,19 @@ private:
 public:
     /**
      * @brief Construct the model with an initial state.
-     * @param y0 initial state value (default 0.0)
+     * @param y0 Initial state value (default 0.0)
      */
     explicit Model(double y0 = 0.0) noexcept;
 
     /**
      * @brief Get current state.
-     * @return current value of y
+     * @return Current value of y
      */
     double getY() const noexcept;
 
     /**
      * @brief Update the state by adding input u (y += u).
-     * @param u input
+     * @param u Input
      */
     void update(double u) noexcept;
 };

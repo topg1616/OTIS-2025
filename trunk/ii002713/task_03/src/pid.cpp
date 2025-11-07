@@ -1,19 +1,15 @@
 #include "pid.h"
-#include <algorithm> // std::clamp
-#include <iostream>  // std::cerr
 
 PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
-    : Kp(Kp_), Ki(Ki_), Kd(Kd_), dt(dt_) {
+    : Kp(Kp_), Ki(Ki_), Kd(Kd_),
+      dt(dt_ > 0.0 ? dt_ : DEFAULT_DT),
+      inv_dt(1.0 / (dt_ > 0.0 ? dt_ : DEFAULT_DT)) 
+{
     if (dt_ <= 0.0) {
         std::cerr << "PID::PID: invalid dt <= 0, using DEFAULT_DT\n";
-        dt = PID::DEFAULT_DT;
-    } else {
-        dt = dt_;
     }
-    inv_dt = 1.0 / dt;
 }
 
-// Compute control signal
 double PID::compute(double setpoint, double measured) noexcept {
     double error = setpoint - measured;
 

@@ -1,30 +1,35 @@
-#include <iostream>
 #include "pid.h"
 #include "model.h"
+#include <iostream>
+#include <vector>
 
 int main() {
-    // Создаём PID-контроллер
-    PID pid(2.0, 1.0, 0.1, 0.1);  // Kp, Ki, Kd, dt
-    pid.setOutputLimits(-10.0, 10.0);     // ограничение управляющего воздействия
-    pid.setIntegralLimits(-5.0, 5.0);     // ограничение интеграла (антивиндап)
+    // Настройка PID контроллера: Kp, Ki, Kd
+    PID pid(2.0, 1.0, 0.1, 0.1);
 
-    // Создаём модель системы
-    Model model(0.0);  // начальное состояние y = 0.0
+    // Ограничения выхода и интеграла
+    pid.setOutputLimits(-10.0, 10.0);
+    pid.setIntegralLimits(-5.0, 5.0);
 
-    const double setpoint = 1.0;  // желаемое значение
-    const int steps = 50;         // число шагов симуляции
+    // Создаем модель с начальным состоянием y = 0
+    Model model(0.0);
 
-    std::cout << "Step\tY\tControl\n";
+    const double setpoint = 1.0;  // Желаемое значение
+    const int steps = 50;          // Количество шагов симуляции
+    std::vector<double> history;   // Для хранения состояния модели
 
     for (int i = 0; i < steps; ++i) {
-        double measured = model.getY();
-        double u = pid.compute(setpoint, measured); // вычисление управляющего воздействия
-        model.update(u);                             // обновление состояния модели
+        double y = model.getY();
+        double u = pid.compute(setpoint, y); // Сигнал управления
+        model.update(u);                     // Обновляем модель
+        history.push_back(model.getY());
 
-        std::cout << i << "\t" << measured << "\t" << u << "\n";
+        std::cout << "Step " << i
+                  << ", y = " << model.getY()
+                  << ", control = " << u
+                  << std::endl;
     }
 
-    std::cout << "Final state: y = " << model.getY() << "\n";
-
+    std::cout << "\nFinal model output: " << model.getY() << std::endl;
     return 0;
 }
