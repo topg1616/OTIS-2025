@@ -1,25 +1,29 @@
 #include <iostream>
-#include "pid.h"
+#include <iomanip>
 #include "model.h"
+#include "pid.h"
 
-using namespace std;
-
-/**
- * @brief Тестовая программа моделирования системы «объект + ПИД-регулятор».
- */
 int main() {
-    PID pid(2.0, 5.0, 1.0, 1.0);
-    Model model(0.9, 0.1);
+    double setpoint = 10.0;    // Желаемое значение
+    PID pid(0.5, 0.1);         // Коэффициенты регулятора
+    Model model(0.0);          // Начальное состояние модели
 
-    double yzad = 1.0;
-    cout << "k\ty(k)\tu(k)\n";
+    std::cout << std::fixed << std::setprecision(3);
+    std::cout << "Step\tControl (u)\tOutput (y)\tError\n";
 
-    for (int k = 0; k < 20; ++k) {
-        double y = model.getY();
-        double u = pid.compute(y, yzad);
-        double y_next = model.step(u);
-        cout << k << "\t" << y_next << "\t" << u << "\n";
+    for (int step = 0; step < 50; ++step) {
+        double error = setpoint - model.getY(); // ошибка
+        double control = pid.compute(error);    // сигнал управления
+        model.update(control);                  // реакция модели
+
+        std::cout << step << "\t" 
+                  << control << "\t\t" 
+                  << model.getY() << "\t\t" 
+                  << error << "\n";
     }
+
+    std::cout << "\nFinal output y ≈ " << model.getY() 
+              << " (target = " << setpoint << ")\n";
 
     return 0;
 }

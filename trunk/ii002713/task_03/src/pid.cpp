@@ -1,24 +1,25 @@
 #include "pid.h"
 
-PID::PID(double K_, double T_, double TD_, double T0_)
-    : K(K_), T(T_), TD(TD_), T0(T0_),
-      e0(0.0), e1(0.0), e2(0.0), u(0.0) 
-{
-    q0 = K * (1.0 + T0 / T + TD / T0);
-    q1 = -K * (1.0 + 2.0 * TD / T0 - T0 / T);
-    q2 = K * (TD / T0);
+PID::PID(double k, double t) {
+    K = k;
+    T = t;
 }
 
-double PID::compute(double y, double yzad) {
-    e2 = e1;
-    e1 = e0;
-    e0 = yzad - y;
+double PID::compute(double e) {
+    // Пример дискретного ПИД
+    const double kp = K;
+    const double ki = K / (2.0 * T);
+    const double kd = K * T / 2.0;
 
-    double du = q0 * e0 + q1 * e1 + q2 * e2;
-    u += du;
+    u += kp * (e - e1) + ki * (e + e1) + kd * (e - 2 * e1 + e2);
+
+    e2 = e1;
+    e1 = e;
+    e0 = e;
+
     return u;
 }
 
-void PID::reset() {
-    e0 = e1 = e2 = u = 0.0;
+double PID::getU() const {
+    return u;
 }
