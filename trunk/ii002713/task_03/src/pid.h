@@ -24,7 +24,20 @@ public:
     double compute(double setpoint, double measured) noexcept;
     void reset() noexcept;
 
+    /**
+     * @brief Set output limits
+     * @param min Minimum output
+     * @param max Maximum output
+     * @note If min > max, limits are not updated
+     */
     void setOutputLimits(double min, double max) noexcept;
+
+    /**
+     * @brief Set integral limits (anti-windup)
+     * @param min Minimum integral
+     * @param max Maximum integral
+     * @note If min > max, limits are not updated
+     */
     void setIntegralLimits(double min, double max) noexcept;
 };
 

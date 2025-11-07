@@ -1,6 +1,6 @@
 #include "model.h"
 
-// Конструктор теперь использует только аргумент
+// Простая модель: y(t+1) = y(t) + u
 Model::Model(double y0) noexcept : y(y0) {}
 
 double Model::getY() const noexcept {
