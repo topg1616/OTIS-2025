@@ -14,7 +14,7 @@ private:
      *
      * Represents the output or state variable of the model.
      */
-    double y{0.0};  // in-class инициализация
+    double y{0.0};  ///< in-class initialization
 
 public:
     /**
@@ -30,10 +30,12 @@ public:
     double getY() const noexcept;
 
     /**
-     * @brief Update the state by adding input u (y += u).
-     * @param u Input
+     * @brief Update the state using input and time step.
+     * @param u Input signal
+     * @param dt Time step
+     * @return Updated output
      */
-    void update(double u) noexcept;
+    double update(double u, double dt) noexcept;
 };
 
 #endif // MODEL_H

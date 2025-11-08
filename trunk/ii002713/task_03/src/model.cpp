@@ -3,12 +3,12 @@
 Model::Model(double y0) noexcept
     : y(y0) {}
 
-// Получение текущего состояния
 double Model::getY() const noexcept {
     return y;
 }
 
-// Обновление состояния (интегратор)
-void Model::update(double u) noexcept {
-    y += u;
+double Model::update(double u, double dt) noexcept {
+    // простая динамическая модель интегратора: y += u * dt
+    y += u * dt;
+    return y;
 }

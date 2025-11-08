@@ -1,5 +1,6 @@
 #include "pid.h"
 #include <algorithm> // std::clamp
+#include <iostream>  // std::cerr
 
 /**
  * @brief Construct a PID controller.
@@ -10,9 +11,13 @@ PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
     : Kp(Kp_), Ki(Ki_), Kd(Kd_), prev_error(0.0), integral(0.0)
 {
     if (dt_ <= 0.0) {
-    dt = DEFAULT_DT;
+        std::cerr << "PID::PID: invalid dt <= 0, using DEFAULT_DT\n";
+        dt = DEFAULT_DT;
+    } else {
+        dt = dt_;
     }
-    else {dt = dt_;}
+
+    inv_dt = 1.0 / dt;
 }
 
 /**
@@ -25,12 +30,17 @@ PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
 double PID::compute(double setpoint, double measured) noexcept {
     double error = setpoint - measured;
 
-    integral = std::clamp(integral + error * dt, integral_min, integral_max);
+    // Integral term with anti-windup
+    integral += error * dt;
+    integral = std::clamp(integral, integral_min, integral_max);
 
+    // Derivative term (safe, since inv_dt is initialized)
     double derivative = (error - prev_error) * inv_dt;
     prev_error = error;
 
-    return std::clamp(Kp * error + Ki * integral + Kd * derivative, output_min, output_max);
+    // PID output
+    double output = Kp * error + Ki * integral + Kd * derivative;
+    return std::clamp(output, output_min, output_max);
 }
 
 /**
@@ -38,8 +48,7 @@ double PID::compute(double setpoint, double measured) noexcept {
  *
  * Clears the integral and previous error.
  */
-void PID::reset() noexcept
-{
+void PID::reset() noexcept {
     prev_error = 0.0;
     integral = 0.0;
 }
@@ -50,8 +59,7 @@ void PID::reset() noexcept
  * @param min Minimum output
  * @param max Maximum output
  */
-void PID::setOutputLimits(double min, double max) noexcept
-{
+void PID::setOutputLimits(double min, double max) noexcept {
     if (min > max) {
         std::cerr << "PID::setOutputLimits ignored invalid limits: min > max\n";
         return;
@@ -66,15 +74,15 @@ void PID::setOutputLimits(double min, double max) noexcept
  * @param min Minimum integral
  * @param max Maximum integral
  */
-void PID::setIntegralLimits(double min, double max) noexcept
-{
+void PID::setIntegralLimits(double min, double max) noexcept {
     if (min > max) {
         std::cerr << "PID::setIntegralLimits ignored invalid limits: min > max\n";
         return;
     }
+
     integral_min = min;
     integral_max = max;
 
-    // Ensure current integral respects new bounds
+    // Clamp current integral to new bounds
     integral = std::clamp(integral, integral_min, integral_max);
 }

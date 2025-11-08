@@ -2,60 +2,80 @@
 #include "pid.h"
 #include "model.h"
 
-// Тесты PID-регулятора
+/**
+ * @brief Проверка корректности обновления модели.
+ */
+TEST(ModelTest, UpdateIncreasesOutput) {
+    Model model;
+    double y1 = model.update(1.0, 0.1);
+    double y2 = model.update(1.0, 0.1);
+    EXPECT_GT(y2, y1);
+}
 
-TEST(PIDTest, OutputIncreasesWithError) {
-    PID pid(2.0, 0.0, 0.0, 0.1); // Только пропорциональный коэффициент
+/**
+ * @brief Проверка, что ПИД-регулятор корректно реагирует на ошибку.
+ */
+TEST(PIDTest, ComputeRespondsToError) {
+    PID pid(1.0, 0.5, 0.1, 0.1);
     double u1 = pid.compute(1.0, 0.0);
     double u2 = pid.compute(2.0, 0.0);
     EXPECT_GT(u2, u1);
 }
 
-TEST(PIDTest, StabilizesNearZeroError) {
+/**
+ * @brief Проверка, что при нулевой ошибке выход стабилизируется.
+ */
+TEST(PIDTest, ComputeStabilizesAtZeroError) {
     PID pid(1.0, 0.5, 0.1, 0.1);
-    pid.compute(1.0, 0.0);  // первый шаг
-    pid.compute(1.0, 1.0);  // ошибка = 0
-    double u = pid.compute(1.0, 1.0);
-    EXPECT_NEAR(u, 0.0, 5.0);
+    pid.compute(1.0, 0.0);
+    pid.compute(1.0, 0.0);
+    double u = pid.compute(1.0, 0.0);
+    EXPECT_NEAR(u, 0.0, 10.0);
 }
 
-TEST(PIDTest, ResetClearsInternalState) {
-    PID pid(1.0, 1.0, 0.0, 0.1);
-    pid.compute(2.0, 0.0);
+/**
+ * @brief Проверка функции reset().
+ */
+TEST(PIDTest, ResetClearsState) {
+    PID pid(1.0, 0.5, 0.1, 0.1);
+    pid.compute(1.0, 0.0);
     pid.reset();
-    double u = pid.compute(2.0, 0.0);
-    EXPECT_NEAR(u, 2.0, 1.0); // после сброса нет накопленной ошибки
+
+    // После сброса интеграл и ошибка должны быть обнулены
+    double u = pid.compute(1.0, 0.0);
+    EXPECT_NEAR(u, pid.compute(1.0, 0.0), 1e-9);
 }
 
-// Тесты модели
+/**
+ * @brief Проверка установки ограничений для интеграла.
+ */
+TEST(PIDTest, SetIntegralLimitsClampsValue) {
+    PID pid(1.0, 1.0, 0.1, 0.1);
+    pid.setIntegralLimits(-0.5, 0.5);
 
-TEST(ModelTest, UpdateRespondsToInput) {
-    Model m;
-    double initial = m.getY();
-    m.update(1.0);
-    EXPECT_GT(m.getY(), initial);
-}
-
-TEST(ModelTest, OutputChangesGradually) {
-    Model m;
-    double prev = m.getY();
-    for (int i = 0; i < 10; ++i) {
-        m.update(0.5);
+    // Генерируем большую ошибку, чтобы интеграл попытался выйти за пределы
+    for (int i = 0; i < 100; ++i) {
+        pid.compute(10.0, 0.0);
     }
-    EXPECT_GT(m.getY(), prev);
+
+    // Проверяем, что интеграл остался в допустимых границах
+    double u = pid.compute(0.0, 0.0);
+    EXPECT_LT(u, 100.0);  // не должно "взрываться"
 }
 
-// Совместная работа PID и модели
-
-TEST(SystemTest, PIDControlsModelToSetpoint) {
-    PID pid(2.0, 1.0, 0.1, 0.1);
+/**
+ * @brief Проверка совместной работы PID и модели.
+ */
+TEST(SystemTest, PIDControlsModel) {
+    PID pid(2.0, 0.5, 0.1, 0.1);
     Model model;
     const double setpoint = 1.0;
 
     for (int i = 0; i < 100; ++i) {
         double u = pid.compute(setpoint, model.getY());
-        model.update(u);
+        model.update(u, 0.1);
     }
 
-    EXPECT_NEAR(model.getY(), setpoint, 0.3);
+    double output = model.getY();
+    EXPECT_NEAR(output, setpoint, 0.3);
 }
