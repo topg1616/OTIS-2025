@@ -1,79 +1,39 @@
 #ifndef PID_H
 #define PID_H
 
-#include <algorithm> // std::clamp
-#include <iostream>  // std::cerr
-
-/**
- * @brief PID controller class.
- *
- * Implements a discrete-time PID controller with anti-windup
- * and configurable output and integral limits.
- */
 class PID {
-private:
-    double Kp{};          ///< Proportional gain
-    double Ki{};          ///< Integral gain
-    double Kd{};          ///< Derivative gain
-    double dt{};          ///< Time step
-    double inv_dt{};      ///< Stores 1/dt for optimization
-    double prev_error{};  ///< Previous error
-    double integral{};    ///< Integral of the error
-
-    double output_min{-1e9}; ///< Minimum output
-    double output_max{1e9};  ///< Maximum output
-    double integral_min{-1e6}; ///< Minimum integral
-    double integral_max{1e6};  ///< Maximum integral
-
-    static constexpr double DEFAULT_DT = 0.1; ///< Default time step
-
 public:
-    /**
-     * @brief Construct a PID controller.
-     *
-     * Initializes gains and time step. If dt_ <= 0.0, DEFAULT_DT is used.
-     *
-     * @param Kp_ Proportional gain
-     * @param Ki_ Integral gain
-     * @param Kd_ Derivative gain
-     * @param dt_ Time step (default 0.1s)
-     */
-    explicit PID(double Kp_ = 0.0, double Ki_ = 0.0, double Kd_ = 0.0, double dt_ = DEFAULT_DT) noexcept;
+    // Конструктор
+    PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept;
 
-    /**
-     * @brief Compute control signal based on setpoint and measurement.
-     *
-     * Calculates PID output with anti-windup for the integral term
-     * and clamps the output to [output_min, output_max].
-     *
-     * @param setpoint Desired value
-     * @param measured Measured value
-     * @return Control output
-     */
+    // Вычисление PID-сигнала
     double compute(double setpoint, double measured) noexcept;
 
-    /**
-     * @brief Reset integral and previous error.
-     *
-     * Resets the PID controller state.
-     */
+    // Сброс состояния PID
     void reset() noexcept;
 
-    /**
-     * @brief Set output limits.
-     *
-     * @param min Minimum output
-     * @param max Maximum output
-     */
+    // Ограничения выхода и интеграла
     void setOutputLimits(double min, double max) noexcept;
-
-    /**
-     * @brief Set integral limits.
-     *
-     * @param min Minimum integral
-     * @param max Maximum integral
-     */
     void setIntegralLimits(double min, double max) noexcept;
+
+    // Изменение времени дискретизации
+    void setDt(double new_dt) noexcept;
+
+private:
+    double Kp;
+    double Ki;
+    double Kd;
+    double dt;
+    double inv_dt;       // для вычисления производной
+    double prev_error;   // предыдущая ошибка
+    double integral;     // интегральная составляющая
+
+    double output_min;
+    double output_max;
+    double integral_min;
+    double integral_max;
+
+    static constexpr double DEFAULT_DT = 0.01; // default timestep
 };
 
 #endif // PID_H

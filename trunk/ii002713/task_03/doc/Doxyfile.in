@@ -6,13 +6,14 @@ PROJECT_BRIEF          = "Модель системы с PID-регулятор�
 OUTPUT_LANGUAGE        = Russian
 
 # Входные файлы
-# Используем абсолютные пути, которые CMake подставит при генерации
-INPUT                  = @CMAKE_SOURCE_DIR@/src @CMAKE_SOURCE_DIR@/doc/readme.md
+# Пути относительно src/, где лежит CMakeLists.txt
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@ @CMAKE_CURRENT_SOURCE_DIR@/../doc/readme.md
 FILE_PATTERNS          = *.h *.cpp *.md
 RECURSIVE              = NO
 
 # Вывод
-OUTPUT_DIRECTORY       = @CMAKE_SOURCE_DIR@/doc/html
+# HTML будет генерироваться в trunk/ii002713/task_03/doc/html
+OUTPUT_DIRECTORY       = @CMAKE_CURRENT_SOURCE_DIR@/../doc/html
 GENERATE_HTML          = YES
 GENERATE_LATEX         = NO
 HTML_OUTPUT            = .
@@ -25,8 +26,8 @@ EXTRACT_STATIC         = NO
 
 # Визуальные настройки
 FULL_PATH_NAMES        = NO
-STRIP_FROM_PATH        = @CMAKE_SOURCE_DIR@
-USE_MDFILE_AS_MAINPAGE = @CMAKE_SOURCE_DIR@/doc/readme.md
+STRIP_FROM_PATH        = @CMAKE_CURRENT_SOURCE_DIR@
+USE_MDFILE_AS_MAINPAGE = @CMAKE_CURRENT_SOURCE_DIR@/../doc/readme.md
 
 # Диаграммы Graphviz
 HAVE_DOT               = YES

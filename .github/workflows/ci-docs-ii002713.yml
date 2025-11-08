@@ -18,15 +18,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install dependencies
         run: |
           sudo apt-get update || exit 1
           sudo apt-get install -y doxygen graphviz cmake g++ make || exit 1
 
-      - name: Configure project
+      - name: Configure CMake
         working-directory: trunk/ii002713/task_03/src
-        run: cmake -B build -S .
+        run: cmake -S . -B build
 
       - name: Build project
         working-directory: trunk/ii002713/task_03/src
@@ -41,7 +43,7 @@ jobs:
         run: cmake --build build --target doc
 
       - name: Deploy documentation to GitHub Pages
-        uses: peaceiris/actions-gh-pages@373f7d2c1b4cc6df8eab6789b1c77dbbdbcd6a2b
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: trunk/ii002713/task_03/doc/html
