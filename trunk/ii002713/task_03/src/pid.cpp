@@ -1,6 +1,5 @@
 #include "pid.h"
 #include <algorithm> // std::clamp
-#include <iostream>  // std::cerr
 
 /**
  * @brief Construct a PID controller.
@@ -11,12 +10,9 @@ PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
     : Kp(Kp_), Ki(Ki_), Kd(Kd_), prev_error(0.0), integral(0.0)
 {
     if (dt_ <= 0.0) {
-        std::cerr << "PID::PID: invalid dt <= 0, using DEFAULT_DT\n";
-        dt = DEFAULT_DT;
-    } else {
-        dt = dt_;
+    dt = DEFAULT_DT;
     }
-    inv_dt = 1.0 / dt;
+    else {dt = dt_;}
 }
 
 /**
@@ -26,21 +22,15 @@ PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
  * @param measured Measured value
  * @return Control output
  */
-double PID::compute(double setpoint, double measured) noexcept
-{
+double PID::compute(double setpoint, double measured) noexcept {
     double error = setpoint - measured;
 
-    // Integral term with anti-windup
-    integral += error * dt;
-    integral = std::clamp(integral, integral_min, integral_max);
+    integral = std::clamp(integral + error * dt, integral_min, integral_max);
 
-    // Derivative term
     double derivative = (error - prev_error) * inv_dt;
     prev_error = error;
 
-    // PID output with clamping
-    double out = Kp * error + Ki * integral + Kd * derivative;
-    return std::clamp(out, output_min, output_max);
+    return std::clamp(Kp * error + Ki * integral + Kd * derivative, output_min, output_max);
 }
 
 /**

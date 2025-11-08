@@ -2,17 +2,19 @@
 #define MODEL_H
 
 /**
- * @brief Simple dynamic model used for simulation.
+ * @brief Simple dynamic model for simulation purposes.
  *
- * The Model class represents a system with a single state variable y.
- * The model used here is a simple integrator: y <- y + u.
+ * The Model class represents a system whose state is described by the variable @c y.
+ * The state @c y can be initialized and updated via the provided methods.
  */
 class Model {
 private:
     /**
      * @brief Current state of the model.
+     *
+     * Represents the output or state variable of the model.
      */
-    double y{0.0};
+    double y{0.0};  // in-class инициализация
 
 public:
     /**
