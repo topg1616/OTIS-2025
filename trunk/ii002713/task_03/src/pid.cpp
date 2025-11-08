@@ -17,7 +17,8 @@ PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
         dt = dt_;
     }
 
-    inv_dt = 1.0 / dt;
+    // ✅ Initialize reciprocal of dt for derivative calculation
+    inv_dt = (dt > 0.0) ? 1.0 / dt : 1.0 / DEFAULT_DT;
 }
 
 /**
@@ -34,11 +35,11 @@ double PID::compute(double setpoint, double measured) noexcept {
     integral += error * dt;
     integral = std::clamp(integral, integral_min, integral_max);
 
-    // Derivative term (safe, since inv_dt is initialized)
+    // Derivative term (safe, since inv_dt is always initialized)
     double derivative = (error - prev_error) * inv_dt;
     prev_error = error;
 
-    // PID output
+    // PID output (clamped)
     double output = Kp * error + Ki * integral + Kd * derivative;
     return std::clamp(output, output_min, output_max);
 }
@@ -58,12 +59,15 @@ void PID::reset() noexcept {
  *
  * @param min Minimum output
  * @param max Maximum output
+ *
+ * Logs a warning if min > max.
  */
 void PID::setOutputLimits(double min, double max) noexcept {
     if (min > max) {
         std::cerr << "PID::setOutputLimits ignored invalid limits: min > max\n";
         return;
     }
+
     output_min = min;
     output_max = max;
 }
@@ -73,6 +77,8 @@ void PID::setOutputLimits(double min, double max) noexcept {
  *
  * @param min Minimum integral
  * @param max Maximum integral
+ *
+ * Logs a warning if min > max.
  */
 void PID::setIntegralLimits(double min, double max) noexcept {
     if (min > max) {
