@@ -23,15 +23,17 @@ private:
     double Kp;
     double Ki;
     double Kd;
-    double dt;
-    double inv_dt;       // для вычисления производной
-    double prev_error;   // предыдущая ошибка
-    double integral;     // интегральная составляющая
 
-    double output_min;
-    double output_max;
-    double integral_min;
-    double integral_max;
+    double dt;
+    double inv_dt;
+
+    double prev_error = 0.0;       // in-class initializer
+    double integral   = 0.0;       // in-class initializer
+
+    double output_min   = -1e9;    // in-class initializer
+    double output_max   =  1e9;    // in-class initializer
+    double integral_min = -1e9;    // in-class initializer
+    double integral_max =  1e9;    // in-class initializer
 
     static constexpr double DEFAULT_DT = 0.01; // default timestep
 };

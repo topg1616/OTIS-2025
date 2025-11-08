@@ -4,8 +4,7 @@
 
 // Конструктор
 PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
-    : Kp(Kp_), Ki(Ki_), Kd(Kd_), prev_error(0.0), integral(0.0),
-      output_min(-1e9), output_max(1e9), integral_min(-1e9), integral_max(1e9)
+    : Kp(Kp_), Ki(Ki_), Kd(Kd_)
 {
     if (dt_ <= 0.0) {
         std::cerr << "PID::PID: invalid dt <= 0, using DEFAULT_DT\n";
