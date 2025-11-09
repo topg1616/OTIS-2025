@@ -19,14 +19,11 @@ PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
 double PID::compute(double setpoint, double measured) noexcept {
     const double error = setpoint - measured;
 
-    // Интегральная составляющая с анти-виндапом
     integral = std::clamp(integral + error * dt, integral_min, integral_max);
 
-    // Дифференциальная составляющая (по ошибке)
     const double derivative = (error - prev_error) * inv_dt;
     prev_error = error;
 
-    // Выход PID (с ограничением)
     const double output = Kp * error + Ki * integral + Kd * derivative;
     return std::clamp(output, output_min, output_max);
 }
@@ -56,7 +53,6 @@ void PID::setIntegralLimits(double min, double max) noexcept {
     integral_min = min;
     integral_max = max;
 
-    // Ограничиваем текущий интеграл под новые границы
     integral = std::clamp(integral, integral_min, integral_max);
 }
 
