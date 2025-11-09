@@ -1,35 +1,40 @@
 #include "pid.h"
-#include <algorithm> // std::clamp
-#include <cstdio>    // fputs, stderr
+#include <algorithm>
+#include <cstdio>
+#include <limits>
 
 // Конструктор
 PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
-    : Kp(Kp_), Ki(Ki_), Kd(Kd_)
+    : Kp(Kp_), Ki(Ki_), Kd(Kd_),
+      prev_error(0.0),
+      integral(0.0),
+      output_min(-std::numeric_limits<double>::infinity()),
+      output_max( std::numeric_limits<double>::infinity()),
+      integral_min(-std::numeric_limits<double>::infinity()),
+      integral_max( std::numeric_limits<double>::infinity())
 {
     if (dt_ <= 0.0) {
         fputs("PID::PID: invalid dt <= 0, using DEFAULT_DT\n", stderr);
-        dt = DEFAULT_DT;
+        dt = DEFAULT_DT; // ensure DEFAULT_DT > 0
     } else {
         dt = dt_;
     }
-
     inv_dt = 1.0 / dt;
 }
 
 // Вычисление сигнала управления
 double PID::compute(double setpoint, double measured) noexcept {
-    double error = setpoint - measured;
+    const double error = setpoint - measured;
 
     // Интегральная составляющая с анти-виндапом
-    integral += error * dt;
-    integral = std::clamp(integral, integral_min, integral_max);
+    integral = std::clamp(integral + error * dt, integral_min, integral_max);
 
-    // Дифференциальная составляющая
-    double derivative = (error - prev_error) * inv_dt;
+    // Дифференциальная составляющая (по ошибке)
+    const double derivative = (error - prev_error) * inv_dt;
     prev_error = error;
 
     // Выход PID (с ограничением)
-    double output = Kp * error + Ki * integral + Kd * derivative;
+    const double output = Kp * error + Ki * integral + Kd * derivative;
     return std::clamp(output, output_min, output_max);
 }
 
