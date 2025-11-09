@@ -1,13 +1,13 @@
 #include "pid.h"
 #include <algorithm> // std::clamp
-#include <iostream>  // std::cerr
+#include <cstdio>    // fputs, stderr
 
 // Конструктор
 PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
     : Kp(Kp_), Ki(Ki_), Kd(Kd_)
 {
     if (dt_ <= 0.0) {
-        std::cerr << "PID::PID: invalid dt <= 0, using DEFAULT_DT=" << DEFAULT_DT << "\n";
+        fputs("PID::PID: invalid dt <= 0, using DEFAULT_DT\n", stderr);
         dt = DEFAULT_DT;
     } else {
         dt = dt_;
@@ -42,7 +42,7 @@ void PID::reset() noexcept {
 // Установка ограничений выхода
 void PID::setOutputLimits(double min, double max) noexcept {
     if (min > max) {
-        std::cerr << "PID::setOutputLimits ignored invalid limits: min > max\n";
+        fputs("PID::setOutputLimits ignored invalid limits: min > max\n", stderr);
         return;
     }
     output_min = min;
@@ -52,7 +52,7 @@ void PID::setOutputLimits(double min, double max) noexcept {
 // Установка ограничений интеграла
 void PID::setIntegralLimits(double min, double max) noexcept {
     if (min > max) {
-        std::cerr << "PID::setIntegralLimits ignored invalid limits: min > max\n";
+        fputs("PID::setIntegralLimits ignored invalid limits: min > max\n", stderr);
         return;
     }
     integral_min = min;
@@ -65,7 +65,7 @@ void PID::setIntegralLimits(double min, double max) noexcept {
 // Изменение времени дискретизации
 void PID::setDt(double new_dt) noexcept {
     if (new_dt <= 0.0) {
-        std::cerr << "PID::setDt ignored invalid dt <= 0\n";
+        fputs("PID::setDt ignored invalid dt <= 0\n", stderr);
         return;
     }
     dt = new_dt;
