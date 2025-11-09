@@ -7,7 +7,7 @@ PID::PID(double Kp_, double Ki_, double Kd_, double dt_)
     : Kp(Kp_), Ki(Ki_), Kd(Kd_)
 {
     if (dt_ <= 0.0) {
-        std::cerr << "PID::PID: invalid dt <= 0, using DEFAULT_DT\n";
+        std::cerr << "PID::PID: invalid dt <= 0, using DEFAULT_DT=" << DEFAULT_DT << "\n";
         dt = DEFAULT_DT; // ensure DEFAULT_DT > 0
     } else {
         dt = dt_;
