@@ -53,6 +53,8 @@ void PID::setIntegralLimits(double min, double max) {
         std::cerr << "PID::setIntegralLimits ignored invalid limits: min > max\n";
         return;
     }
+
+    // Copilot fix: update stored limits
     integral_min = min;
     integral_max = max;
 
