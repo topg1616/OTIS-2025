@@ -1,17 +1,10 @@
 #include "pid.h"
 #include <algorithm>
 #include <cstdio>
-#include <limits>
 
 // Конструктор
 PID::PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept
-    : Kp(Kp_), Ki(Ki_), Kd(Kd_),
-      prev_error(0.0),
-      integral(0.0),
-      output_min(-std::numeric_limits<double>::infinity()),
-      output_max( std::numeric_limits<double>::infinity()),
-      integral_min(-std::numeric_limits<double>::infinity()),
-      integral_max( std::numeric_limits<double>::infinity())
+    : Kp(Kp_), Ki(Ki_), Kd(Kd_)
 {
     if (dt_ <= 0.0) {
         fputs("PID::PID: invalid dt <= 0, using DEFAULT_DT\n", stderr);

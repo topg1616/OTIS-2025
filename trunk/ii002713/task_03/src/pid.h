@@ -1,6 +1,8 @@
 #ifndef PID_H
 #define PID_H
 
+#include <limits> // для infinity()
+
 /**
  * @class PID
  * @brief Proportional-Integral-Derivative (PID) controller class.
@@ -20,6 +22,7 @@ public:
      * @param dt_ Discrete time step (seconds).
      */
     PID(double Kp_, double Ki_, double Kd_, double dt_) noexcept;
+
     /**
      * @brief Computes the PID control signal.
      * @param setpoint The desired target value.
@@ -27,27 +30,30 @@ public:
      * @return The computed control output.
      */
     double compute(double setpoint, double measured) noexcept;
+
     /**
      * @brief Resets the internal state of the PID controller (integral and previous error).
      */
     void reset() noexcept;
+
     /**
      * @brief Sets the minimum and maximum output limits for the controller.
      * @param min Minimum output value.
      * @param max Maximum output value.
      */
     void setOutputLimits(double min, double max) noexcept;
+
     /**
      * @brief Sets the minimum and maximum limits for the integral term (anti-windup).
      * @param min Minimum integral value.
      * @param max Maximum integral value.
      */
     void setIntegralLimits(double min, double max) noexcept;
+
     /**
      * @brief Sets a new discrete time step for the controller.
      * @param new_dt New time step (seconds).
      */
-
     void setDt(double new_dt) noexcept;
 
 private:
@@ -58,15 +64,15 @@ private:
     double dt;
     double inv_dt;
 
-    double prev_error = 0.0;       // in-class initializer
-    double integral   = 0.0;       // in-class initializer
+    double prev_error = 0.0;  ///< Previous error term
+    double integral   = 0.0;  ///< Integrated error term
 
-    double output_min   = -1e9;    // in-class initializer
-    double output_max   =  1e9;    // in-class initializer
-    double integral_min = -1e9;    // in-class initializer
-    double integral_max =  1e9;    // in-class initializer
+    double output_min    = -std::numeric_limits<double>::infinity();
+    double output_max    =  std::numeric_limits<double>::infinity();
+    double integral_min  = -std::numeric_limits<double>::infinity();
+    double integral_max  =  std::numeric_limits<double>::infinity();
 
-    static constexpr double DEFAULT_DT = 0.01; // default timestep
+    static constexpr double DEFAULT_DT = 0.01; ///< Default timestep (s)
 };
 
 #endif // PID_H
