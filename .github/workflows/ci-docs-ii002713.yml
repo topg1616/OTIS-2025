@@ -43,7 +43,7 @@ jobs:
         run: cmake --build build --target doc
 
       - name: Deploy documentation to GitHub Pages
-        uses: peaceiris/actions-gh-pages@373f7d2c1b4cc6df8eab6789b1c77dbbdbcd6a2b
+        uses: peaceiris/actions-gh-pages@v4
 
         with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
