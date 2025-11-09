@@ -7,82 +7,70 @@
  * @class PID
  * @brief Proportional-Integral-Derivative (PID) controller class.
  *
- * Provides basic PID control functionality with configurable
- * proportional, integral, and derivative gains, as well as
- * output and integral clamping to prevent windup.
+ * Provides basic PID control functionality with configurable gains,
+ * output limits, and integral anti-windup protection.
  */
 class PID {
 public:
     /**
-     * @brief Construct a new PID controller.
-     *
+     * @brief Constructs a PID controller with given coefficients and time step.
      * @param Kp_ Proportional gain.
      * @param Ki_ Integral gain.
      * @param Kd_ Derivative gain.
-     * @param dt_ Sampling time (seconds). If non-positive, a default value is used.
+     * @param dt_ Sampling time step (must be > 0).
      */
-    explicit PID(double Kp_ = 0.0, double Ki_ = 0.0, double Kd_ = 0.0, double dt_ = DEFAULT_DT) noexcept;
+    explicit PID(double Kp_ = 0.0, double Ki_ = 0.0, double Kd_ = 0.0, double dt_ = DEFAULT_DT);
 
     /**
-     * @brief Compute the PID control output.
-     *
+     * @brief Computes the control signal based on setpoint and measured value.
      * @param setpoint Desired target value.
-     * @param measured Current measured value.
-     * @return Control signal after applying PID correction.
+     * @param measured Current measured process value.
+     * @return Computed control signal (clamped within output limits).
      */
     double compute(double setpoint, double measured) noexcept;
 
     /**
-     * @brief Reset the PID internal state.
-     *
-     * Clears the accumulated integral term and previous error.
+     * @brief Resets the controller’s internal state (integral and previous error).
      */
     void reset() noexcept;
 
     /**
-     * @brief Set output signal limits.
-     *
-     * @param min Lower limit for controller output.
-     * @param max Upper limit for controller output.
-     *
-     * If min > max, the call is ignored and previous limits are preserved.
+     * @brief Sets the output limits for the control signal.
+     * @param min Minimum output value.
+     * @param max Maximum output value.
      */
     void setOutputLimits(double min, double max);
 
     /**
-     * @brief Set integral term limits to prevent windup.
-     *
-     * @param min Lower limit for the integral term.
-     * @param max Upper limit for the integral term.
-     *
-     * If min > max, the call is ignored and previous limits are preserved.
+     * @brief Sets the limits for the integral term to prevent windup.
+     * @param min Minimum integral value.
+     * @param max Maximum integral value.
      */
     void setIntegralLimits(double min, double max);
 
     /**
-     * @brief Change the controller sampling time.
-     *
-     * @param new_dt New sampling time in seconds.
-     *
-     * If new_dt <= 0, the change is ignored.
+     * @brief Sets the sampling time (dt) for the PID controller.
+     * @param new_dt New time step (must be > 0).
      */
     void setDt(double new_dt);
 
 private:
-    double Kp{};
-    double Ki{};
-    double Kd{};
-    double dt{};
-    double inv_dt{}; ///< Stores reciprocal of dt for faster derivative computation
-    double prev_error{}; ///< Previous cycle error
-    double integral{};   ///< Integrated error term
+    double Kp;
+    double Ki;
+    double Kd;
 
-    double output_min{-1e9};
-    double output_max{1e9};
-    double integral_min{-1e6};
-    double integral_max{1e6};
+    double dt;
+    double inv_dt;
 
-    static constexpr double DEFAULT_DT = 0.1;
+    double prev_error = 0.0;
+    double integral = 0.0;
+
+    double output_min = -std::numeric_limits<double>::infinity();
+    double output_max =  std::numeric_limits<double>::infinity();
+    double integral_min = -std::numeric_limits<double>::infinity();
+    double integral_max =  std::numeric_limits<double>::infinity();
+
+    static constexpr double DEFAULT_DT = 0.01;
 };
 
 #endif // PID_H
