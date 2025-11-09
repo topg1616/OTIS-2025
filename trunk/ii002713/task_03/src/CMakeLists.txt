@@ -1,46 +1,47 @@
 cmake_minimum_required(VERSION 3.14)
 project(ii002713_task_03 LANGUAGES CXX)
 
-# Compilation settings
+# --- General settings ---
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Strict warnings
-if (MSVC)
+# --- Strict warnings ---
+if(MSVC)
     add_compile_options(/W4 /permissive-)
 else()
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# Paths
+# --- Paths ---
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../test)
 set(DOC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../doc)
 
-# Libraries
+# --- Project libraries ---
 add_library(model STATIC ${SRC_DIR}/model.cpp)
 target_include_directories(model PUBLIC ${SRC_DIR})
 
 add_library(pid STATIC ${SRC_DIR}/pid.cpp)
 target_include_directories(pid PUBLIC ${SRC_DIR})
 
-# Main program
+# --- Main executable ---
 add_executable(pid_sim ${SRC_DIR}/main.cpp)
 target_link_libraries(pid_sim PRIVATE pid model)
 
-# Google Test
+# --- Google Test ---
 include(FetchContent)
 FetchContent_Declare(
     googletest
     URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
 )
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)  # Match runtime with project
 FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 include(GoogleTest)
 
-# Add all tests from ../test folder
+# --- Tests ---
 file(GLOB TEST_SOURCES "${TEST_DIR}/*.cpp")
 if(TEST_SOURCES)
     add_executable(runTests_ii002713_task03 ${TEST_SOURCES})
@@ -50,14 +51,12 @@ else()
     message(WARNING "Test files not found in ${TEST_DIR}")
 endif()
 
-# Doxygen
+# --- Doxygen ---
 find_package(Doxygen QUIET)
 if (DOXYGEN_FOUND)
     set(DOXYFILE_IN ${DOC_DIR}/Doxyfile.in)
     set(DOXYFILE_OUT ${CMAKE_BINARY_DIR}/Doxyfile)
-
     configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
-
     add_custom_target(doc
         COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

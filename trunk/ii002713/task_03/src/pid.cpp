@@ -4,11 +4,11 @@
 
 // Constructor
 PID::PID(double Kp_, double Ki_, double Kd_, double dt_)
-    : Kp(Kp_), Ki(Ki_), Kd(Kd_)
+    : Kp(Kp_), Ki(Ki_), Kd(Kd_), prev_error_initialized(false)
 {
     if (dt_ <= 0.0) {
         std::cerr << "PID::PID: invalid dt <= 0, using DEFAULT_DT=" << DEFAULT_DT << "\n";
-        dt = DEFAULT_DT; // ensure DEFAULT_DT > 0
+        dt = DEFAULT_DT;
     } else {
         dt = dt_;
     }
@@ -22,8 +22,13 @@ double PID::compute(double setpoint, double measured) noexcept {
     // Integral component with anti-windup
     integral = std::clamp(integral + error * dt, integral_min, integral_max);
 
-    // Derivative component (based on error)
-    const double derivative = (error - prev_error) * inv_dt;
+    // Derivative component
+    double derivative = 0.0;
+    if (prev_error_initialized) {
+        derivative = (error - prev_error) * inv_dt;
+    } else {
+        prev_error_initialized = true;
+    }
     prev_error = error;
 
     // PID output (with clamping)
@@ -35,6 +40,7 @@ double PID::compute(double setpoint, double measured) noexcept {
 void PID::reset() noexcept {
     prev_error = 0.0;
     integral = 0.0;
+    prev_error_initialized = false;
 }
 
 // Set output limits

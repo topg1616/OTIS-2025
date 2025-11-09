@@ -1,22 +1,45 @@
-#include <iostream>
 #include "pid.h"
-#include "model.h"
+#include <iostream>
+
+// Linear model
+double linearModel(double input) {
+    constexpr double T = 0.05;
+    return input * T;
+}
+
+// Nonlinear model
+double nonlinearModel(double input) {
+    constexpr double T = 0.05;
+    return input * T + 0.01 * input * input;
+}
+
+void runSimulation(double (*model)(double), int steps, PID& controller, const std::string& name) {
+    std::cout << "=== " << name << " ===\n";
+
+    double measured = 0.0;
+    double setpoint = 1.0;
+
+    for (int i = 0; i < steps; ++i) {
+        double control = controller.compute(setpoint, measured);
+        measured = model(control);
+
+        std::cout << "Step " << i
+                  << " | Setpoint: " << setpoint
+                  << " | Control: " << control
+                  << " | Output: " << measured << "\n";
+    }
+    std::cout << name << " simulation finished.\n\n";
+}
 
 int main() {
-    PID pid(2.0, 0.5, 0.1, 0.1);  // P, I, D, dt
-    Model model;                  // y = 0 by default
-    const double setpoint = 1.0;  // desired value
-    const double dt = 0.1;        // simulation step
+    PID linearPID(1.0, 0.1, 0.05);
+    PID nonlinearPID(1.0, 0.1, 0.05);
 
-    for (int i = 0; i < 50; ++i) {
-        double measured = model.getY();                 // current system value
-        double control = pid.compute(setpoint, measured); // compute control signal
-        double output = model.update(control, dt);        // apply control
-        std::cout << "Step " << i
-                  << " | Control: " << control
-                  << " | Output: " << output
-                  << std::endl;
-    }
+    int steps = 50;
 
+    runSimulation(linearModel, steps, linearPID, "Linear Model");
+    runSimulation(nonlinearModel, steps, nonlinearPID, "Nonlinear Model");
+
+    std::cout << "Simulations completed.\n";
     return 0;
 }
