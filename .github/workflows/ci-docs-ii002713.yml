@@ -28,7 +28,7 @@ jobs:
 
       - name: Configure CMake
         working-directory: trunk/ii002713/task_03/src
-        run: cmake -S . -B build
+        run: cmake -B build -S .
 
       - name: Build project
         working-directory: trunk/ii002713/task_03/src
@@ -46,5 +46,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@373f7d2c1b4cc6df8eab6789b1c77dbbdbcd6a2b
 
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: trunk/ii002713/task_03/doc/html
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: trunk/ii002713/task_03/doc/html
