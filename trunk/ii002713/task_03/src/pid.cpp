@@ -54,7 +54,6 @@ void PID::setIntegralLimits(double min, double max) {
         return;
     }
 
-    // Copilot fix: update stored limits
     integral_min = min;
     integral_max = max;
 

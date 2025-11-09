@@ -84,7 +84,7 @@ TEST(PIDTest, InvalidOutputLimitsIgnored) {
  * @brief Test that integral limits are applied correctly
  */
 TEST(PIDTest, IntegralLimitsWork) {
-    // Ki = 1 so output == integral, Kp = Kd = 0
+    // Ki = 1 so output == integral (before output clamping), Kp = Kd = 0
     PID pid(0.0, 1.0, 0.0, 0.1);
     pid.setIntegralLimits(-0.5, 0.5);
 
