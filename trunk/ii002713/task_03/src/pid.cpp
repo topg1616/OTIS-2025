@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <iostream>
 
-// Конструктор
+// Constructor
 PID::PID(double Kp_, double Ki_, double Kd_, double dt_)
     : Kp(Kp_), Ki(Ki_), Kd(Kd_)
 {
@@ -15,29 +15,29 @@ PID::PID(double Kp_, double Ki_, double Kd_, double dt_)
     inv_dt = 1.0 / dt;
 }
 
-// Вычисление сигнала управления
+// Compute control signal
 double PID::compute(double setpoint, double measured) noexcept {
     const double error = setpoint - measured;
 
-    // Интегральная составляющая с анти-виндапом
+    // Integral component with anti-windup
     integral = std::clamp(integral + error * dt, integral_min, integral_max);
 
-    // Дифференциальная составляющая (по ошибке)
+    // Derivative component (based on error)
     const double derivative = (error - prev_error) * inv_dt;
     prev_error = error;
 
-    // Выход PID (с ограничением)
+    // PID output (with clamping)
     const double output = Kp * error + Ki * integral + Kd * derivative;
     return std::clamp(output, output_min, output_max);
 }
 
-// Сброс состояния PID
+// Reset PID state
 void PID::reset() noexcept {
     prev_error = 0.0;
     integral = 0.0;
 }
 
-// Установка ограничений выхода
+// Set output limits
 void PID::setOutputLimits(double min, double max) {
     if (min > max) {
         std::cerr << "PID::setOutputLimits ignored invalid limits: min > max\n";
@@ -47,7 +47,7 @@ void PID::setOutputLimits(double min, double max) {
     output_max = max;
 }
 
-// Установка ограничений интеграла
+// Set integral limits
 void PID::setIntegralLimits(double min, double max) {
     if (min > max) {
         std::cerr << "PID::setIntegralLimits ignored invalid limits: min > max\n";
@@ -56,11 +56,11 @@ void PID::setIntegralLimits(double min, double max) {
     integral_min = min;
     integral_max = max;
 
-    // Ограничиваем текущий интеграл под новые границы
+    // Clamp current integral to new bounds
     integral = std::clamp(integral, integral_min, integral_max);
 }
 
-// Изменение времени дискретизации
+// Change sampling time
 void PID::setDt(double new_dt) {
     if (new_dt <= 0.0) {
         std::cerr << "PID::setDt ignored invalid dt <= 0\n";

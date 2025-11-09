@@ -8,7 +8,7 @@ double Model::getY() const noexcept {
 }
 
 double Model::update(double u, double dt) noexcept {
-    // простая динамическая модель интегратора: y += u * dt
+    // simple integrator dynamic model: y += u * dt
     y += u * dt;
     return y;
 }
