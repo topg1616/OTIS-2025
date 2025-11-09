@@ -48,7 +48,6 @@ public:
      * @param new_dt New time step (seconds).
      */
 
-    // Изменение времени дискретизации
     void setDt(double new_dt) noexcept;
 
 private:
