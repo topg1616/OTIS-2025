@@ -37,16 +37,16 @@ TEST(PIDTest, DerivativeScaling) {
 
     double setpoint = 1.0;
 
-    // Simulate a step change
-    pid_fast.compute(setpoint, 0.0);
-    pid_slow.compute(setpoint, 0.0);
-
+    // Simulate initial measurement
+    double u_fast_before = pid_fast.compute(setpoint, 0.0);
+    double u_slow_before = pid_slow.compute(setpoint, 0.0);
     // Now introduce small change in measurement
-    double u_fast = pid_fast.compute(setpoint, 0.9);
-    double u_slow = pid_slow.compute(setpoint, 0.9);
-
-    // With smaller dt (larger inv_dt), derivative term dominates => bigger change
-    EXPECT_GT(std::fabs(u_fast), std::fabs(u_slow));
+    double u_fast_after = pid_fast.compute(setpoint, 0.9);
+    double u_slow_after = pid_slow.compute(setpoint, 0.9);
+    // With smaller dt (larger inv_dt), derivative term dominates => bigger *change* in output
+    double delta_u_fast = u_fast_after - u_fast_before;
+    double delta_u_slow = u_slow_after - u_slow_before;
+    EXPECT_GT(std::fabs(delta_u_fast), std::fabs(delta_u_slow));
 }
 
 /**
