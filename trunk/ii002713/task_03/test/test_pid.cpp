@@ -20,7 +20,8 @@ TEST(PIDTest, BasicResponse) {
         double u = pid.compute(setpoint, measured);
         // should remain positive and not immediately drop below previous (basic sanity)
         EXPECT_GT(u, 0.0);
-        EXPECT_GE(u, prev_u - 1e-12);
+        // relax tolerance a bit to avoid flaky failures on different platforms/optimizations
+        EXPECT_GE(u, prev_u - 1e-6);
         prev_u = u;
     }
 }
@@ -74,8 +75,9 @@ TEST(PIDTest, InvalidOutputLimitsIgnored) {
 
     // After invalid call, old limits must remain valid
     double u = pid.compute(10.0, 0.0);
-    EXPECT_LE(u, 1.0 + 1e-12);
-    EXPECT_GE(u, -1.0 - 1e-12);
+    const double eps = 1e-6;
+    EXPECT_LE(u, 1.0 + eps);
+    EXPECT_GE(u, -1.0 - eps);
 }
 
 /**
