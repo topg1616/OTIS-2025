@@ -16,6 +16,6 @@ jobs:
       - run: |
           pip install mkdocs-material mkdocs-i18n 
       - name: Deploy MkDocs site  
-      - working-directory: trunk/ii002713/task_03/doc/html
+      - working-directory: ./trunk/ii002713/task_03/doc/html
       - run: |
           mkdocs gh-deploy --force
