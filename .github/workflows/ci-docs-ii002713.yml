@@ -38,6 +38,16 @@ jobs:
         working-directory: trunk/ii002713/task_03/src/build
         run: ctest --output-on-failure
 
+      - name: Analyze with SonarCloud
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          args: >
+            -Dsonar.projectKey=ii002713
+            -Dsonar.organization=brstu
+            -Dsonar.exclusions=**/doc/html/**,**/*.html,**/*.css,**/*.js
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: Generate Doxygen documentation
         working-directory: trunk/ii002713/task_03/src
         run: cmake --build build --target doc
