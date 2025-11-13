@@ -2,7 +2,9 @@ name: Deploy docs
 on:
   push:
     branches: [ "task_03" ]
-    
+
+  workflow_dispatch:
+  
 permissions:
   contents: read
   pages: write
