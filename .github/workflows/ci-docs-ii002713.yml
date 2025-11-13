@@ -1,63 +1,51 @@
-name: CI Docs ii002713
+# Sample workflow for building and deploying a Jekyll site to GitHub Pages
+name: Deploy Jekyll with GitHub Pages dependencies preinstalled
 
 on:
+  # Runs on pushes targeting the default branch
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    branches: ["task_03"]
 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  build-test-docs:
+  # Build job
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      # --- Checkout ---
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
         with:
-          fetch-depth: 0
+          source: ./trunk/ii002713/task_03/doc/html
+          destination: ./_site
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
 
-      # --- Install dependencies ---
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y doxygen graphviz cmake g++ make nodejs npm
-
-      # --- Configure CMake ---
-      - name: Configure CMake
-        working-directory: trunk/ii002713/task_03/src
-        run: cmake -B build -S .
-
-      # --- Build project ---
-      - name: Build project
-        working-directory: trunk/ii002713/task_03/src
-        run: cmake --build build
-
-      # --- Run Google Tests ---
-      - name: Run tests
-        working-directory: trunk/ii002713/task_03/src/build
-        run: ctest --output-on-failure
-
-      # --- Generate Doxygen XML ---
-      - name: Generate Doxygen XML
-        working-directory: trunk/ii002713/task_03/src
-        run: cmake --build build --target doc
-
-      # --- Convert XML to Markdown using Moxygen ---
-      - name: Convert XML to Markdown
-        working-directory: trunk/ii002713/task_03
-        run: |
-          npm install -g moxygen
-          moxygen -o doc/html/index.md doc/xml
-
-      # --- Deploy documentation to GitHub Pages ---
-      - name: Deploy documentation to GitHub Pages
-        uses: peaceiris/actions-gh-pages@373f7d2c1b4cc6df8eab6789b1c77dbbdbcd6a2b
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: trunk/ii002713/task_03/doc/html
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
