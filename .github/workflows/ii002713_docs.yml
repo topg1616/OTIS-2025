@@ -1,8 +1,12 @@
 name: Deploy docs
 on:
   push:
-    branches:
-      - task_03
+    branches: [ "task_03" ]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  
 jobs:
   deploy:
     runs-on: ubuntu-latest
