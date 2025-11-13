@@ -6,7 +6,6 @@ PROJECT_BRIEF          = "Модель системы с PID-регулятор�
 OUTPUT_LANGUAGE        = Russian
 
 # Входные файлы
-# Paths relative to src/, where CMakeLists.txt is located
 INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@ @CMAKE_CURRENT_SOURCE_DIR@/../doc/readme.md
 FILE_PATTERNS          = *.h *.cpp *.md
 RECURSIVE              = NO
@@ -14,10 +13,10 @@ RECURSIVE              = NO
 # Вывод
 # HTML will be generated in trunk/ii002713/task_03/doc/html
 OUTPUT_DIRECTORY       = @CMAKE_CURRENT_SOURCE_DIR@/../doc/html
-GENERATE_HTML          = YES
+GENERATE_HTML          = NO
 GENERATE_LATEX         = NO
-HTML_OUTPUT            = .
-GENERATE_TREEVIEW      = YES
+GENERATE_XML           = YES
+XML_OUTPUT             = xml
 
 # Information extraction
 EXTRACT_ALL            = YES

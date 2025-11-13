@@ -16,42 +16,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # --- Checkout ---
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # --- Install dependencies ---
       - name: Install dependencies
         run: |
-          sudo apt-get update || exit 1
-          sudo apt-get install -y doxygen graphviz cmake g++ make || exit 1
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz cmake g++ make nodejs npm
 
+      # --- Configure CMake ---
       - name: Configure CMake
         working-directory: trunk/ii002713/task_03/src
         run: cmake -B build -S .
 
+      # --- Build project ---
       - name: Build project
         working-directory: trunk/ii002713/task_03/src
         run: cmake --build build
 
+      # --- Run Google Tests ---
       - name: Run tests
         working-directory: trunk/ii002713/task_03/src/build
         run: ctest --output-on-failure
 
-      - name: Analyze with SonarCloud
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          args: >
-            -Dsonar.projectKey=ii002713
-            -Dsonar.organization=brstu
-            -Dsonar.exclusions=**/doc/html/**,**/*.html,**/*.css,**/*.js
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      - name: Generate Doxygen documentation
+      # --- Generate Doxygen XML ---
+      - name: Generate Doxygen XML
         working-directory: trunk/ii002713/task_03/src
         run: cmake --build build --target doc
 
+      # --- Convert XML to Markdown using Moxygen ---
+      - name: Convert XML to Markdown
+        working-directory: trunk/ii002713/task_03
+        run: |
+          npm install -g moxygen
+          moxygen -o doc/html/index.md doc/xml
+
+      # --- Deploy documentation to GitHub Pages ---
       - name: Deploy documentation to GitHub Pages
         uses: peaceiris/actions-gh-pages@373f7d2c1b4cc6df8eab6789b1c77dbbdbcd6a2b
         with:
