@@ -31,7 +31,7 @@
 ![1](images/1.png)
 
 Здесь w(t) - алгоритм функционирования системы; u(t) - управляющее воздействие; z(t) - внешние возмущающие воздействия, влияние которых нужно свести к минимуму; y(t) - выходная переменная; e(t) = w(t) - y(t) - отклонение выходной переменной y(t) от желаемого значения w(t).
-Выходной переменной может быть температура в печи, скорость вращения вала двигателя, уровень жидкости в баке, рассовмещение знаков привязки фотошаблонов и т.п. Целью управления может быть изменение выходной переменной по заданному закону w(t). Для этого нужно свести к минимуму ошибку управления e(t).
+Выходной переменной может быть температура в печи, скорость вращения вала двигателя, уровень жидкости в баке, рассогласование знаков привязки фотошаблонов и т.п. Целью управления может быть изменение выходной переменной по заданному закону w(t). Для этого нужно свести к минимуму ошибку управления e(t).
 Эта задача решается автоматическим регулятором G<sub>R</sub> (рис.1), который описывается некоторым законом регулирования u(t) = G<sub>R</sub>[e(t)]. Для правильного выбора закона регулирования нужно знать математическую модель объекта управления y(t) = G<sub>O</sub>[u(t)]. Математическая модель обычно представляет собой систему обыкновенных нелинейных дифференциальных уравнений или дифференциальных уравнений в частных производных. Нахождение вида и коэффициентов этих уравнений представляет собой задачу идентификации объекта управления. Для традиционно используемых объектов управления математические модели часто известны и тогда задача идентификации конкретного объекта сводится к отысканию значений коэффициентов уравнений. Во многих случаях эти коэффициенты можно подобрать опытным путем в процессе настройки системы.
 Выбор закона регулирования u(t) = G<sub>R</sub>[e(t)] является основным звеном в процессе проектирования системы автоматического регулирования. Синтез оптимального регулятора, дающего максимальные показатели качества регулирования, представляет собой достаточно сложную задачу. Кроме того, реализация оптимального регулятора может оказаться экономически неоправданной. Однако во многих случаях для автоматизации производственных процессов могут быть использованы простейшие и наиболее распространенные типы линейных регуляторов - П-, ПИ-. и ПИД-регуляторы.
 Идеализированное уравнение ПИД-регулятора имеет вид
@@ -110,30 +110,57 @@
 ```C++
 #include "pid.h"
 #include <iostream>
+#include <string>
 
-// Linear model
-class LinearModel {
+/**
+ * @brief Шаблонная модель динамической системы.
+ * Хранит внутреннее состояние, обновляет его через правило UpdateRule.
+ */
+template <typename UpdateRule>
+class SystemModel {
 public:
-    double operator()(double input) const {
+    double operator()(double input) {
+        state = updateRule(state, input);
+        return state;
+    }
+
+private:
+    double state = 0.0;
+    UpdateRule updateRule;
+};
+
+/**
+ * @brief Линейная система: y(t+1) = y(t) + T * u
+ * Простая тепловая модель без нелинейностей.
+ */
+struct LinearUpdate {
+    double operator()(double state, double input) const {
         constexpr double T = 0.05;
-        return input * T;
+        return state + T * input;
     }
 };
-// Nonlinear model
-class NonlinearModel {
-public:
-    double operator()(double input) const {
+
+/**
+ * @brief Нелинейная система: y(t+1) = y(t) + T*u + α*u²
+ * Ускоряет рост при сильном нагреве.
+ */
+struct NonlinearUpdate {
+    double operator()(double state, double input) const {
         constexpr double T = 0.05;
-        return input * T + 0.01 * input * input;
+        return state + T * input + 0.01 * input * input;
     }
 };
 
-template <typename ModelFunc>
-void runSimulation(ModelFunc model, int steps, PID& controller, const std::string& name) {
+using LinearModel    = SystemModel<LinearUpdate>;
+using NonlinearModel = SystemModel<NonlinearUpdate>;
+
+template <typename Model>
+void runSimulation(Model model, int steps, PID& controller, const std::string& name)
+{
     std::cout << "=== " << name << " ===\n";
 
     double measured = 0.0;
-    double setpoint = 1.0;
+    const double setpoint = 1.0;
 
     for (int i = 0; i < steps; ++i) {
         double control = controller.compute(setpoint, measured);
@@ -144,6 +171,7 @@ void runSimulation(ModelFunc model, int steps, PID& controller, const std::strin
                   << " | Control: " << control
                   << " | Output: " << measured << "\n";
     }
+
     std::cout << name << " simulation finished.\n\n";
 }
 
@@ -151,10 +179,10 @@ int main() {
     PID linearPID(1.0, 0.1, 0.05);
     PID nonlinearPID(1.0, 0.1, 0.05);
 
-    int steps = 50;
+    const int steps = 50;
 
-    runSimulation(linearModel, steps, linearPID, "Linear Model");
-    runSimulation(nonlinearModel, steps, nonlinearPID, "Nonlinear Model");
+    runSimulation(LinearModel{}, steps, linearPID, "Linear Model");
+    runSimulation(NonlinearModel{}, steps, nonlinearPID, "Nonlinear Model");
 
     std::cout << "Simulations completed.\n";
     return 0;
@@ -286,6 +314,7 @@ Step 49 | Setpoint: 1 | Control: 0.987766 | Output: 0.0591451
 ![g4](images/g4.png)
 
 ## Вывод полученных данных при использовании ПИД-регулятора
+
 
 ### Линейная модель (`T = 0.05, T0 = 1, TD = 10`)
 - Система демонстрирует переходный процесс с небольшими колебаниями.
