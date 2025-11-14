@@ -1,32 +1,35 @@
 #include "pid.h"
 #include <iostream>
 
-// Linear system with internal state
-class LinearModel {
+// Common system model template with internal state
+template <typename UpdateRule>
+class SystemModel {
 public:
     double operator()(double input) {
-        constexpr double T = 0.05;
-        state += T * input;  // accumulate dynamics
+        state = updateRule(state, input);
         return state;
     }
-
 private:
     double state = 0.0;
+    UpdateRule updateRule;
 };
-
-// Nonlinear system with internal state
-class NonlinearModel {
-public:
-    double operator()(double input) {
+// Linear update rule
+struct LinearUpdate {
+    double operator()(double state, double input) const {
         constexpr double T = 0.05;
-        state += T * input + 0.01 * input * input;  // nonlinear accumulation
-        return state;
+        return state + T * input;
     }
-
-private:
-    double state = 0.0;
+};
+// Nonlinear update rule
+struct NonlinearUpdate {
+    double operator()(double state, double input) const {
+        constexpr double T = 0.05;
+        return state + T * input + 0.01 * input * input;
+    }
 };
 
+using LinearModel = SystemModel<LinearUpdate>;
+using NonlinearModel = SystemModel<NonlinearUpdate>;
 template <typename ModelFunc>
 void runSimulation(ModelFunc model, int steps, PID& controller, const std::string& name){
     std::cout << "=== " << name << " ===\n";

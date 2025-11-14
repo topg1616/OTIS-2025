@@ -112,18 +112,24 @@
 #include <iostream>
 
 // Linear model
-double linearModel(double input) {
-    constexpr double T = 0.05;
-    return input * T;
-}
-
+class LinearModel {
+public:
+    double operator()(double input) const {
+        constexpr double T = 0.05;
+        return input * T;
+    }
+};
 // Nonlinear model
-double nonlinearModel(double input) {
-    constexpr double T = 0.05;
-    return input * T + 0.01 * input * input;
-}
+class NonlinearModel {
+public:
+    double operator()(double input) const {
+        constexpr double T = 0.05;
+        return input * T + 0.01 * input * input;
+    }
+};
 
-void runSimulation(double (*model)(double), int steps, PID& controller, const std::string& name) {
+template <typename ModelFunc>
+void runSimulation(ModelFunc model, int steps, PID& controller, const std::string& name) {
     std::cout << "=== " << name << " ===\n";
 
     double measured = 0.0;
