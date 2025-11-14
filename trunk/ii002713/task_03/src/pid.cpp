@@ -4,7 +4,7 @@
 
 // Constructor
 PID::PID(double Kp_, double Ki_, double Kd_, double dt_)
-    : Kp(Kp_), Ki(Ki_), Kd(Kd_), prev_error_initialized(false)
+    : Kp(Kp_), Ki(Ki_), Kd(Kd_)
 {
     if (dt_ <= 0.0) {
         std::cerr << "PID::PID: invalid dt <= 0, using DEFAULT_DT=" << DEFAULT_DT << "\n";

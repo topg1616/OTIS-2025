@@ -1,5 +1,6 @@
 #include "pid.h"
 #include <iostream>
+#include <functional>
 
 // Linear model
 double linearModel(double input) {
@@ -13,7 +14,7 @@ double nonlinearModel(double input) {
     return input * T + 0.01 * input * input;
 }
 
-void runSimulation(double (*model)(double), int steps, PID& controller, const std::string& name) {
+void runSimulation(std::function<double(double)> model, int steps, PID& controller, const std::string& name){
     std::cout << "=== " << name << " ===\n";
 
     double measured = 0.0;
