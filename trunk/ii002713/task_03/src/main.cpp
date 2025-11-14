@@ -14,7 +14,8 @@ double nonlinearModel(double input) {
     return input * T + 0.01 * input * input;
 }
 
-void runSimulation(std::function<double(double)> model, int steps, PID& controller, const std::string& name){
+template <typename ModelFunc>
+void runSimulation(ModelFunc model, int steps, PID& controller, const std::string& name){
     std::cout << "=== " << name << " ===\n";
 
     double measured = 0.0;
