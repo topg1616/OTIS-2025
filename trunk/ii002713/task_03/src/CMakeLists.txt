@@ -51,29 +51,16 @@ else()
     message(WARNING "Test files not found in ${TEST_DIR}")
 endif()
 
-# --- Doxygen: Generate XML only ---
+# --- Doxygen ---
 find_package(Doxygen QUIET)
-
 if (DOXYGEN_FOUND)
-    message(STATUS "Doxygen found: ${DOXYGEN_EXECUTABLE}")
-
-    # Paths
     set(DOXYFILE_IN ${DOC_DIR}/Doxyfile.in)
     set(DOXYFILE_OUT ${CMAKE_BINARY_DIR}/Doxyfile)
-
-    file(MAKE_DIRECTORY ${DOC_DIR}/xml)
-
-    set(GENERATE_HTML "NO")
-    set(GENERATE_XML "YES")
-    set(XML_OUTPUT "xml")
-
     configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
-
-    # Aim
     add_custom_target(doc
         COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
-        WORKING_DIRECTORY ${DOC_DIR}
-        COMMENT "Generating Doxygen XML documentation..."
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Generating Doxygen documentation..."
         VERBATIM
     )
 else()
