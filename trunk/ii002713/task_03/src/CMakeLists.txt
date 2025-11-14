@@ -27,7 +27,7 @@ target_include_directories(pid PUBLIC ${SRC_DIR})
 
 # --- Main executable ---
 add_executable(pid_sim ${SRC_DIR}/main.cpp)
-target_link_libraries(pid_sim PRIVATE pid model)
+target_link_libraries(pid_sim PRIVATE pid)
 
 # --- Google Test ---
 include(FetchContent)

@@ -9,8 +9,8 @@
 <br><br><br><br><br>
 <p align="right">Выполнил:</p>
 <p align="right">Студент 2 курса</p>
-<p align="right">Группы ИИ-28/24</p>
-<p align="right">Цибульскас В.C.</p>
+<p align="right">Группы ИИ-27</p>
+<p align="right">Лыщенко К.В.</p>
 <p align="right">Проверил:</p>
 <p align="right">Дворанинович Д.А.</p>
 <br><br><br><br><br>
@@ -298,7 +298,7 @@ Step 49 | Setpoint: 1 | Control: 0.987766 | Output: 0.0591451
 - Выход стабилизируется около значения ≈ 0.11 — система остаётся устойчивой, но переходный процесс медленнее и с большей амплитудой колебаний, чем в линейной модели.
 
 ## Link to documentation
-
+[link to documentation](https://topg1616.github.io/OTIS-2025/)
 
 ## Код юнит-тестов [ test/test_pid.cpp ]
 ```C++

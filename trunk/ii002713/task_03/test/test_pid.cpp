@@ -3,6 +3,8 @@
 #include <cmath>
 #include <limits>
 
+constexpr double EPS = 1e-6;
+
 /**
  * @brief Basic test: PID output is positive and stable for constant positive error
  */
@@ -21,7 +23,7 @@ TEST(PIDTest, BasicResponse) {
         // should remain positive and not immediately drop below previous (basic sanity)
         EXPECT_GT(u, 0.0);
         // relax tolerance a bit to avoid flaky failures on different platforms/optimizations
-        EXPECT_GE(u, prev_u - 1e-6);
+        EXPECT_GE(u, prev_u - EPS);
         prev_u = u;
     }
 }
@@ -76,8 +78,8 @@ TEST(PIDTest, InvalidOutputLimitsIgnored) {
     // After invalid call, old limits must remain valid
     double u = pid.compute(10.0, 0.0);
     const double eps = 1e-6;
-    EXPECT_LE(u, 1.0 + eps);
-    EXPECT_GE(u, -1.0 - eps);
+    EXPECT_LE(u, 1.0 + EPS);
+    EXPECT_GE(u, -1.0 - EPS);
 }
 
 /**
@@ -95,8 +97,8 @@ TEST(PIDTest, IntegralLimitsWork) {
     // Integral should be clamped; output == integral (Ki = 1)
     double u = pid.compute(10.0, 0.0);
     const double eps = 1e-6;
-    EXPECT_LE(u, 0.5 + eps);
-    EXPECT_GE(u, -0.5 - eps);
+    EXPECT_LE(u, 0.5 + EPS);
+    EXPECT_GE(u, -0.5 - EPS);
 }
 
 /**

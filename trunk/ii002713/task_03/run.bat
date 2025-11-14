@@ -1,4 +1,7 @@
 @echo off
+REM Windows-only build script (run.bat)
+REM Requires Windows, Visual Studio and CMake installed.
+REM For Linux/macOS use run.sh instead.
 REM Build Debug, run tests, main program and generate HTML docs
 
 REM Set build directory inside src
@@ -10,7 +13,7 @@ if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
 REM Configure and build Debug
 echo.
 echo Building Debug configuration
-cmake -S %~dp0src -B "%BUILD_DIR%" -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Debug
+cmake -S "%~dp0src" -B "%BUILD_DIR%" -A x64 -DCMAKE_BUILD_TYPE=Debug
 cmake --build "%BUILD_DIR%" --config Debug
 
 REM Run Google Test

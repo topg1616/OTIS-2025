@@ -24,16 +24,22 @@ public:
     explicit Model(double y0 = 0.0) noexcept;
 
     /**
-     * @brief Get current state.
-     * @return Current value of y
+  * @brief Returns the current state of the model.
+     *
+     * This method provides read-only access to the current value of the state variable @c y.
+     *
+     * @return The current value of the state variable @c y.
      */
     double getY() const noexcept;
-
     /**
-     * @brief Update the state using input and time step.
-     * @param u Input signal
-     * @param dt Time step
-     * @return Updated output
+     * @brief Updates the state of the model based on the input and time step.
+     *
+     * This method updates the internal state variable @c y using the provided input signal @p u
+     * and the time step @p dt. The specific update rule is defined in the implementation.
+     *
+     * @param u Input signal to the model, representing the external influence or control input.
+     * @param dt Time step for the update, representing the elapsed time since the last update (must be positive).
+     * @return The updated value of the state variable @c y after applying the input and time step.
      */
     double update(double u, double dt) noexcept;
 };

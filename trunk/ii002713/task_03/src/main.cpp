@@ -1,18 +1,31 @@
 #include "pid.h"
 #include <iostream>
-#include <functional>
 
-// Linear model
-double linearModel(double input) {
-    constexpr double T = 0.05;
-    return input * T;
-}
+// Linear system with internal state
+class LinearModel {
+public:
+    double operator()(double input) {
+        constexpr double T = 0.05;
+        state += T * input;  // accumulate dynamics
+        return state;
+    }
 
-// Nonlinear model
-double nonlinearModel(double input) {
-    constexpr double T = 0.05;
-    return input * T + 0.01 * input * input;
-}
+private:
+    double state = 0.0;
+};
+
+// Nonlinear system with internal state
+class NonlinearModel {
+public:
+    double operator()(double input) {
+        constexpr double T = 0.05;
+        state += T * input + 0.01 * input * input;  // nonlinear accumulation
+        return state;
+    }
+
+private:
+    double state = 0.0;
+};
 
 template <typename ModelFunc>
 void runSimulation(ModelFunc model, int steps, PID& controller, const std::string& name){
@@ -30,6 +43,7 @@ void runSimulation(ModelFunc model, int steps, PID& controller, const std::strin
                   << " | Control: " << control
                   << " | Output: " << measured << "\n";
     }
+
     std::cout << name << " simulation finished.\n\n";
 }
 
@@ -39,8 +53,8 @@ int main() {
 
     int steps = 50;
 
-    runSimulation(linearModel, steps, linearPID, "Linear Model");
-    runSimulation(nonlinearModel, steps, nonlinearPID, "Nonlinear Model");
+    runSimulation(LinearModel{}, steps, linearPID, "Linear Model");
+    runSimulation(NonlinearModel{}, steps, nonlinearPID, "Nonlinear Model");
 
     std::cout << "Simulations completed.\n";
     return 0;
