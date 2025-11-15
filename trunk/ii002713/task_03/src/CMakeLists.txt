@@ -19,15 +19,15 @@ set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../test)
 set(DOC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../doc)
 
 # Project libraries
-add_library(model STATIC ${SRC_DIR}/model.cpp)
-target_include_directories(model PUBLIC ${SRC_DIR})
+add_library(model_ii002713 STATIC ${SRC_DIR}/model.cpp)
+target_include_directories(model_ii002713 PUBLIC ${SRC_DIR})
 
-add_library(pid STATIC ${SRC_DIR}/pid.cpp)
-target_include_directories(pid PUBLIC ${SRC_DIR})
+add_library(pid_ii002713 STATIC ${SRC_DIR}/pid.cpp)
+target_include_directories(pid_ii002713 PUBLIC ${SRC_DIR})
 
 # Main executable
-add_executable(pid_sim ${SRC_DIR}/main.cpp)
-target_link_libraries(pid_sim PRIVATE pid)
+add_executable(pid_sim_ii002713 ${SRC_DIR}/main.cpp)
+target_link_libraries(pid_sim_ii002713 PRIVATE pid_ii002713)
 
 # Google Test
 include(FetchContent)
@@ -45,7 +45,7 @@ include(GoogleTest)
 file(GLOB TEST_SOURCES "${TEST_DIR}/*.cpp")
 if(TEST_SOURCES)
     add_executable(runTests_ii002713_task03 ${TEST_SOURCES})
-    target_link_libraries(runTests_ii002713_task03 PRIVATE gtest_main pid model)
+    target_link_libraries(runTests_ii002713_task03 PRIVATE gtest_main pid_ii002713 model_ii002713)
     gtest_discover_tests(runTests_ii002713_task03)
 else()
     message(WARNING "Test files not found in ${TEST_DIR}")
