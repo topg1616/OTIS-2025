@@ -113,6 +113,12 @@
 #include <string>
 
 /**
+ * @brief Глобальные константы для моделей
+ */
+constexpr double TIME_STEP = 0.05;
+constexpr double NONLINEAR_COEFF = 0.01;
+
+/**
  * @brief Шаблонная модель динамической системы.
  * Хранит внутреннее состояние, обновляет его через правило UpdateRule.
  */
@@ -135,25 +141,26 @@ private:
  */
 struct LinearUpdate {
     double operator()(double state, double input) const {
-        constexpr double T = 0.05;
-        return state + T * input;
+        return state + TIME_STEP * input;
     }
 };
 
 /**
  * @brief Нелинейная система: y(t+1) = y(t) + T*u + α*u²
- * Ускоряет рост при сильном нагреве.
+ * Ускоряет рост при больших входах.
  */
 struct NonlinearUpdate {
     double operator()(double state, double input) const {
-        constexpr double T = 0.05;
-        return state + T * input + 0.01 * input * input;
+        return state + TIME_STEP * input + NONLINEAR_COEFF * input * input;
     }
 };
 
 using LinearModel    = SystemModel<LinearUpdate>;
 using NonlinearModel = SystemModel<NonlinearUpdate>;
 
+/**
+ * @brief Универсальная функция симуляции системы с PID.
+ */
 template <typename Model>
 void runSimulation(Model model, int steps, PID& controller, const std::string& name)
 {
