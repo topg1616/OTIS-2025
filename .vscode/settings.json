@@ -77,5 +77,8 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "filesystem": "cpp"
+        "regex": "cpp",
+        "csignal": "cpp",
+        "span": "cpp"
     }
 }
