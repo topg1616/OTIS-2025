@@ -3,14 +3,14 @@
 #include <string>
 
 /**
- * @brief Глобальные константы для моделей
+ * @brief Global constants for models
  */
 constexpr double TIME_STEP = 0.05;
 constexpr double NONLINEAR_COEFF = 0.01;
 
 /**
  * @brief Шаблонная модель динамической системы.
- * Хранит внутреннее состояние, обновляет его через правило UpdateRule.
+ * Template model of a dynamic system.
  */
 template <typename UpdateRule>
 class SystemModel {
@@ -26,8 +26,8 @@ private:
 };
 
 /**
- * @brief Линейная система: y(t+1) = y(t) + T * u
- * Простая тепловая модель без нелинейностей.
+ * @brief Linear system: y(t+1) = y(t) + T * u
+ * Simple thermal model without nonlinearities.
  */
 struct LinearUpdate {
     double operator()(double state, double input) const {
@@ -36,8 +36,8 @@ struct LinearUpdate {
 };
 
 /**
- * @brief Нелинейная система: y(t+1) = y(t) + T*u + α*u²
- * Ускоряет рост при больших входах.
+ * @brief Nonlinear system: y(t+1) = y(t) + T*u + α*u²
+ * Accelerates growth for large inputs.
  */
 struct NonlinearUpdate {
     double operator()(double state, double input) const {
@@ -49,7 +49,7 @@ using LinearModel    = SystemModel<LinearUpdate>;
 using NonlinearModel = SystemModel<NonlinearUpdate>;
 
 /**
- * @brief Универсальная функция симуляции системы с PID.
+ * @brief Universal function for simulating a system with PID.
  */
 template <typename Model>
 void runSimulation(Model model, int steps, PID& controller, const std::string& name)

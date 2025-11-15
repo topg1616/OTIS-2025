@@ -24,7 +24,7 @@ public:
     explicit Model(double y0 = 0.0) noexcept;
 
     /**
-    * @brief Returns the current state of the model.
+     * @brief Returns the current state of the model.
      *
      * This method provides read-only access to the current value of the state variable @c y.
      *
